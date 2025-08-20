@@ -5,7 +5,7 @@ import SolutionModal from "./components/SolutionModal.jsx";
 // import TestimoniesGrid from "./components/TestimoniesGrid.jsx";
 import UserTestimonies from "./components/UserTestimonies.jsx";
 import VideoPlayer from "./components/VideoPlayer.jsx";
-import "./index.css";
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -239,20 +239,20 @@ function App() {
           </h4>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4">
             <a
-              href="https://wa.me/2348012345678"
+              href="https://wa.me/2348033213597"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition-colors"
             >
-              +234 801 234 5678
+              +2348033213597
             </a>
             <a
-              href="https://wa.me/2348098765432"
+              href="https://wa.me/13069994564"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition-colors"
             >
-              +234 809 876 5432
+              +13069994564
             </a>
           </div>
         </div>

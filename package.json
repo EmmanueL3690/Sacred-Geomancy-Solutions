@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/EmmanueL3690/Sacred-Geomancy-Solutions.git",
+  "homepage": "https://emmanuel3690.github.io/Sacred-Geomancy-Solutions",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@tailwindcss/postcss": "^4.1.12",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
@@ -32,7 +33,7 @@
     "gh-pages": "^6.3.0",
     "globals": "^16.2.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
+    "tailwindcss": "^4.1.12",
     "vite": "^7.0.0"
   }
 }

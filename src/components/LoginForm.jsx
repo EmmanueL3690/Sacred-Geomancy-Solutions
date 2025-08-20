@@ -54,7 +54,7 @@ export default function LoginForm({ onLogin }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm shadow-2xl border-15">
+      <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm shadow-2xl border-3">
         <div className="p-6 sm:p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent mb-2">

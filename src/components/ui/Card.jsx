@@ -15,3 +15,22 @@ export function CardContent({ className, ...props }) {
     <div className={clsx("p-6 pt-0", className)} {...props} />
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
