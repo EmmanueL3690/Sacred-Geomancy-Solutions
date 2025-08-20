@@ -1,9 +1,9 @@
 {
-  "name": "quickcrow",
+  "name": "Sacred-Geomancy-Solutions",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://emmanuel3690.github.io/QuickCrow",
+  "homepage": "https://github.com/EmmanueL3690/Sacred-Geomancy-Solutions.git",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
