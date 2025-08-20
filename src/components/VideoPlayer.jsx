@@ -7,10 +7,9 @@ export default function VideoPlayer() {
   const [isLoading, setIsLoading] = useState(false)
   const videoRef = useRef(null)
 
-  // Video paths (relative to public folder)
   const videos = {
-    english: "/videos/video1.mp4",
-    yoruba: "/videos/video_yo.mp4"
+    english: "/Sacred-Geomancy-Solutions/videos/video1.mp4",
+    yoruba: "/Sacred-Geomancy-Solutions/videos/video_yo.mp4",
   }
 
   const handleLanguageSwitch = (language) => {
@@ -113,4 +112,3 @@ export default function VideoPlayer() {
     </div>
   )
 }
-
