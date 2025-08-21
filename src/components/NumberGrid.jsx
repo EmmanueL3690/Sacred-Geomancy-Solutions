@@ -24,7 +24,7 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
 
     const newGrid = []
     for (let i = 0; i < 8; i++) {
-      newGrid.push(shuffled.slice(i * 10, (i + 1) * 10))
+      newGrid.push(shuffled.slice(i * 8, (i + 1) * 8))
     }
     setNumberGrid(newGrid)
   }
@@ -86,24 +86,22 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-2xl border-2 border-orange-200">
           <h3 className="text-lg sm:text-xl font-bold mb-4">SACRED NUMBER REALM</h3>
 
-          {numberGrid.map((row, rowIndex) => (
-            <div key={rowIndex} className="grid grid-cols-8 sm:grid-cols-8 gap-3 sm:gap-2 mb-5">
-              {row.map((number, colIndex) => (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  onClick={() => handleNumberClick(number)}
-                  className={`aspect-square flex items-center justify-center text-xs sm:text-sm md:text-base font-black rounded-lg transition-all duration-300 transform hover:scale-110 border-2 border-black ${
-                    selectedNumbers.includes(number)
-                      ? "bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 text-white shadow-lg scale-105 border-yellow-400"
-                      : "bg-gradient-to-br from-gray-100 to-gray-200 text-black hover:from-orange-100 hover:to-yellow-100 shadow-md"
-                  }`}
-                  disabled={selectedNumbers.length >= 4 && !selectedNumbers.includes(number)}
-                >
-                  {number}
-                </button>
-              ))}
-            </div>
-          ))}
+          <div className="grid grid-cols-8 gap-1 sm:gap-2 md:gap-3 max-w-full">
+            {numberGrid.flat().map((number, index) => (
+              <button
+                key={`${Math.floor(index / 8)}-${index % 8}`}
+                onClick={() => handleNumberClick(number)}
+                className={`aspect-square flex items-center justify-center text-xs sm:text-sm md:text-base font-black rounded-lg transition-all duration-300 transform hover:scale-110 border-2 border-black ${
+                  selectedNumbers.includes(number)
+                    ? "bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 text-white shadow-lg scale-105 border-yellow-400"
+                    : "bg-gradient-to-br from-gray-100 to-gray-200 text-black hover:from-orange-100 hover:to-yellow-100 shadow-md"
+                }`}
+                disabled={selectedNumbers.length >= 4 && !selectedNumbers.includes(number)}
+              >
+                {number}
+              </button>
+            ))}
+          </div>
 
           <div className="mt-4 sm:mt-6">
             <p className="text-sm sm:text-base font-bold text-black mb-2">
@@ -133,4 +131,3 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
     </div>
   )
 }
- 
