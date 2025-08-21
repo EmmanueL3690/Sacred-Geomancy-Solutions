@@ -6,14 +6,14 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
   const [showResult, setShowResult] = useState(false)
 
   const initialGrid = [
-    [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
-    [24, 26, 28, 30, 32, 44, 46, 58, 64, 68],
-    [70, 72, 74, 76, 76, 80, 84, 88, 96, 108],
-    [110, 82, 84, 86, 88, 90, 92, 106, 104, 128],
-    [166, 64, 96, 98, 100, 104, 110, 116, 120, 124],
-    [166, 88, 104, 102, 109, 106, 112, 114, 126, 128],
-    [180, 92, 94, 96, 98, 100, 102, 100, 124, 128],
-    [184, 106, 108, 110, 120, 124, 126, 128, 130, 128],
+    [1, 2, 3, 4, 5, 6, 7, 8],
+    [9, 10, 11, 12, 13, 14, 15, 16],
+    [17, 18, 19, 20, 21, 22, 23, 24],
+    [25, 26, 27, 28, 29, 30, 31, 32],
+    [33, 34, 35, 36, 37, 38, 39, 40],
+    [41, 42, 43, 44, 45, 46, 47, 48],
+    [49, 50, 51, 52, 53, 54, 55, 56],
+    [57, 58, 59, 60, 61, 62, 63, 64],
   ]
 
   const [numberGrid, setNumberGrid] = useState(initialGrid)
@@ -87,7 +87,7 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
           <h3 className="text-lg sm:text-xl font-bold mb-4">SACRED NUMBER REALM</h3>
 
           {numberGrid.map((row, rowIndex) => (
-            <div key={rowIndex} className="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3 mb-2">
+            <div key={rowIndex} className="grid grid-cols-8 sm:grid-cols-8 gap-3 sm:gap-2 mb-5">
               {row.map((number, colIndex) => (
                 <button
                   key={`${rowIndex}-${colIndex}`}
@@ -133,3 +133,4 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
     </div>
   )
 }
+ 
