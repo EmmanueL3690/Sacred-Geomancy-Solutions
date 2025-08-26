@@ -6,15 +6,16 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
   const [showResult, setShowResult] = useState(false)
 
   const initialGrid = [
-    [1, 2, 3, 4, 5, 6, 7, 8],
-    [9, 10, 11, 12, 13, 14, 15, 16],
-    [17, 18, 19, 20, 21, 22, 23, 24],
-    [25, 26, 27, 28, 29, 30, 31, 32],
-    [33, 34, 35, 36, 37, 38, 39, 40],
-    [41, 42, 43, 44, 45, 46, 47, 48],
-    [49, 50, 51, 52, 53, 54, 55, 56],
-    [57, 58, 59, 60, 61, 62, 63, 64],
-  ]
+    [12, 47, 3, 21, 8, 33, 59, 1],
+    [27, 6, 40, 55, 19, 14, 62, 31],
+    [5, 49, 28, 11, 36, 45, 23, 60],
+    [32, 18, 7, 43, 25, 2, 48, 63],
+    [22, 13, 61, 35, 9, 30, 41, 57],
+    [4, 44, 10, 29, 15, 39, 24, 50],
+    [52, 17, 42, 38, 20, 34, 56, 46],
+    [26, 53, 16, 64, 54, 51, 37, 58],
+  ];
+
 
   const [numberGrid, setNumberGrid] = useState(initialGrid)
 
@@ -62,16 +63,16 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-400 via-red-500 to-pink-500">
-      <div className="p-4 sm:p-6 text-center">
+      <div className="p-2 sm:p-6 text-center">
         {/* Heading */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-black underline mb-6 text-white drop-shadow-lg">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-black underline mb-4 sm:mb-6 text-white drop-shadow-lg">
           DISCOVER YOUR LIFE IN 4 NUMBERS
         </h2>
 
         {/* How It Works Container */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-2xl border-2 border-orange-200 mb-6">
-          <p className="text-lg sm:text-xl font-bold mb-2">HOW IT WORKS</p>
-          <ol className="list-decimal list-inside text-sm sm:text-base text-gray-700 font-bold">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 sm:p-6 shadow-2xl border-2 border-orange-200 mb-4 sm:mb-6">
+          <p className="text-lg sm:text-xl font-black mb-2">HOW IT WORKS</p>
+          <ol className="list-decimal list-inside text-sm sm:text-base text-gray-700 font-black">
             <li>Look at the number chart below.</li>
             <li>Pick 4 numbers — one at a time.</li>
             <li>
@@ -83,15 +84,15 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
         </div>
 
         {/* Number Grid Container */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-2xl border-2 border-orange-200">
-          <h3 className="text-lg sm:text-xl font-bold mb-4">SACRED NUMBER REALM</h3>
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 sm:p-6 shadow-2xl border-2 border-orange-200 mx-1 sm:mx-0">
+          <h3 className="text-lg sm:text-xl font-black mb-4">SACRED NUMBER REALM</h3>
 
-          <div className="grid grid-cols-8 gap-1 sm:gap-2 md:gap-3 max-w-full">
+          <div className="grid grid-cols-8 gap-1 sm:gap-3 md:gap-3 max-w-full">
             {numberGrid.flat().map((number, index) => (
               <button
                 key={`${Math.floor(index / 8)}-${index % 8}`}
                 onClick={() => handleNumberClick(number)}
-                className={`aspect-square flex items-center justify-center text-xs sm:text-sm md:text-base font-black rounded-lg transition-all duration-300 transform hover:scale-110 border-2 border-black ${
+                className={`aspect-square flex items-center justify-center text-sm sm:text-base md:text-lg font-black rounded-lg transition-all duration-300 transform hover:scale-110 border-2 border-black ${
                   selectedNumbers.includes(number)
                     ? "bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 text-white shadow-lg scale-105 border-yellow-400"
                     : "bg-gradient-to-br from-gray-100 to-gray-200 text-black hover:from-orange-100 hover:to-yellow-100 shadow-md"
@@ -104,11 +105,11 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
           </div>
 
           <div className="mt-4 sm:mt-6">
-            <p className="text-sm sm:text-base font-bold text-black mb-2">
+            <p className="text-sm sm:text-base font-black text-black mb-2">
               Selected Numbers: {selectedNumbers.join(", ") || "None"}
             </p>
-            <p className="text-xs sm:text-sm font-bold text-gray-600">{selectedNumbers.length}/4 numbers selected</p>
-            {selectedNumbers.length > 0 && <p className="text-xs text-blue-600 font-bold">✨ Realm reshuffled! ✨</p>}
+            <p className="text-xs sm:text-sm font-black text-gray-600">{selectedNumbers.length}/4 numbers selected</p>
+            {selectedNumbers.length > 0 && <p className="text-xs text-blue-600 font-black">✨ Realm reshuffled! ✨</p>}
           </div>
         </div>
 
@@ -131,3 +132,4 @@ export default function NumberGrid({ selectedNumbers, onNumberSelect, onSaveTest
     </div>
   )
 }
+
