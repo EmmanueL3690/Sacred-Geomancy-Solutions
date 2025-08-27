@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import NumberGrid from "./NumberGrid.jsx";
 // import SolutionModal from "./SolutionModal.jsx";
 import UserTestimonies from "./UserPage.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
@@ -220,8 +219,7 @@ function MainSite({ user, onLogout }) {
           </div>
         </div>
 
-        {/* Number Grid */}
-        <NumberGrid selectedNumbers={selectedNumbers} onNumberSelect={setSelectedNumbers} />
+
 
         {/* Solution Modal */}
         {/* {showSolution && (
