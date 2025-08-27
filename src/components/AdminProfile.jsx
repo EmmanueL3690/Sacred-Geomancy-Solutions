@@ -857,6 +857,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { Card } from "./ui/Card.jsx";
+import { solutionsData } from "./solutionsData.js"; // ✅ import your full solutionsData
 
 // Sacred Numbers Setup (1–16 × A–P)
 const letters = "ABCDEFGHIJKLMNOP".split("");
@@ -865,10 +866,9 @@ const numbers = Array.from({ length: 16 }, (_, i) => i + 1);
 export default function AdminProfile() {
   const [users, setUsers] = useState([]);
   const [testimonies, setTestimonies] = useState([]);
-  const [solutionsData, setSolutionsData] = useState({});
   const [selectedCell, setSelectedCell] = useState(null);
 
-  // Fetch User Details (Live Updates)
+  // Fetch Users
   useEffect(() => {
     const q = query(collection(db, "users"), orderBy("updatedAt", "desc"));
     const unsub = onSnapshot(q, (snapshot) => {
@@ -877,20 +877,13 @@ export default function AdminProfile() {
     return unsub;
   }, []);
 
-  // Fetch User Testimonies (Live Updates)
+  // Fetch Testimonies
   useEffect(() => {
     const q = query(collection(db, "testimonies"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, (snapshot) => {
       setTestimonies(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return unsub;
-  }, []);
-
-  // Import Sacred Solutions (Leave unchanged)
-  useEffect(() => {
-    import("./solutionsData.js").then((module) =>
-      setSolutionsData(module.solutionsData)
-    );
   }, []);
 
   const handleDelete = async (collectionName, id) => {
@@ -901,29 +894,22 @@ export default function AdminProfile() {
     setSelectedCell(`${number}${letter}`);
   };
 
-  const closeModal = () => {
-    setSelectedCell(null);
-  };
+  const closeModal = () => setSelectedCell(null);
 
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={`text-lg ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
-      >
-        ⭐
-      </span>
+  const renderStars = (rating) =>
+    Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={`text-lg ${i < rating ? "text-yellow-400" : "text-gray-300"}`}>⭐</span>
     ));
-  };
 
   return (
     <div className="max-w-7xl mx-auto p-4 space-y-8">
+
       {/* Heading */}
       <h1 className="text-3xl sm:text-4xl font-black text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">
         Admin Dashboard
       </h1>
 
-      {/* User Details Section */}
+      {/* Users */}
       <section>
         <h2 className="text-xl font-black mb-4">👥 User Details</h2>
         {users.length === 0 ? (
@@ -931,10 +917,7 @@ export default function AdminProfile() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {users.map((user) => (
-              <Card
-                key={user.id}
-                className="p-4 relative bg-gradient-to-br from-yellow-50 to-orange-100 shadow-lg rounded-xl border-2 border-orange-200"
-              >
+              <Card key={user.id} className="p-4 relative bg-gradient-to-br from-yellow-50 to-orange-100 shadow-lg rounded-xl border-2 border-orange-200">
                 <p className="font-bold text-lg">{user.name} ({user.age})</p>
                 <p className="text-sm text-gray-700">{user.location}</p>
                 <p className="mt-2 font-semibold text-orange-600">
@@ -952,7 +935,7 @@ export default function AdminProfile() {
         )}
       </section>
 
-      {/* User Testimonies Section */}
+      {/* Testimonies */}
       <section>
         <h2 className="text-xl font-black mb-4">💬 User Testimonies</h2>
         {testimonies.length === 0 ? (
@@ -960,10 +943,7 @@ export default function AdminProfile() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {testimonies.map((t) => (
-              <Card
-                key={t.id}
-                className="p-4 relative bg-gradient-to-br from-green-50 to-emerald-100 shadow-lg rounded-xl border-2 border-emerald-200"
-              >
+              <Card key={t.id} className="p-4 relative bg-gradient-to-br from-green-50 to-emerald-100 shadow-lg rounded-xl border-2 border-emerald-200">
                 <div className="mb-2">{renderStars(t.rating)}</div>
                 <p className="text-gray-800">{t.message}</p>
                 <p className="text-sm text-gray-600 mt-2">— {t.name}</p>
@@ -979,7 +959,7 @@ export default function AdminProfile() {
         )}
       </section>
 
-      {/* Sacred Solutions Archive (unchanged) */}
+      {/* Sacred Solutions Grid */}
       <section>
         <h2 className="text-xl sm:text-2xl font-black text-center mb-6 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
           Sacred Solutions Archive
@@ -990,29 +970,19 @@ export default function AdminProfile() {
             <div className="min-w-[800px]">
               {/* Header Row */}
               <div className="grid grid-cols-17 gap-1 mb-2">
-                <div className="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 text-white font-black text-xs flex items-center justify-center rounded">
-                  #
-                </div>
+                <div className="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 text-white font-black text-xs flex items-center justify-center rounded">#</div>
                 {letters.map((letter) => (
-                  <div
-                    key={letter}
-                    className="aspect-square bg-gradient-to-br from-blue-500 to-purple-500 text-white font-black text-xs flex items-center justify-center rounded"
-                  >
-                    {letter}
-                  </div>
+                  <div key={letter} className="aspect-square bg-gradient-to-br from-blue-500 to-purple-500 text-white font-black text-xs flex items-center justify-center rounded">{letter}</div>
                 ))}
               </div>
 
               {/* Data Rows */}
               {numbers.map((number) => (
                 <div key={number} className="grid grid-cols-17 gap-1 mb-1">
-                  <div className="aspect-square bg-gradient-to-br from-green-500 to-emerald-500 text-white font-black text-xs flex items-center justify-center rounded">
-                    {number}
-                  </div>
+                  <div className="aspect-square bg-gradient-to-br from-green-500 to-emerald-500 text-white font-black text-xs flex items-center justify-center rounded">{number}</div>
                   {letters.map((letter) => {
                     const cellKey = `${number}${letter}`;
                     const hasSolution = solutionsData[cellKey];
-                    const isA = cellKey.endsWith("A");
 
                     return (
                       <button
@@ -1020,10 +990,10 @@ export default function AdminProfile() {
                         onClick={() => handleCellClick(number, letter)}
                         className={`aspect-square text-xs font-bold rounded transition-all duration-200 hover:scale-105 ${
                           hasSolution
-                            ? isA
+                            ? cellKey.endsWith("A")
                               ? "bg-gradient-to-br from-pink-400 to-red-500 text-white shadow-md hover:from-pink-500 hover:to-red-600"
                               : "bg-gradient-to-br from-green-400 to-emerald-400 text-white shadow-md hover:from-green-500 hover:to-emerald-500"
-                            : "bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600 hover:from-gray-300 hover:to-gray-400"
+                            : "bg-gray-200 text-gray-600 hover:from-gray-300 hover:to-gray-400"
                         }`}
                       >
                         {hasSolution ? "✓" : "○"}
@@ -1041,32 +1011,26 @@ export default function AdminProfile() {
       {selectedCell && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <Card className="bg-white/95 backdrop-blur-sm max-w-md w-full shadow-2xl border-2 border-orange-200">
-            <div className="p-6">
-              <div className="text-center mb-4">
-                <h3
-                  className={`text-xl font-black bg-clip-text text-transparent mb-2 ${
-                    selectedCell.endsWith("A")
-                      ? "bg-gradient-to-r from-pink-500 to-red-500"
-                      : "bg-gradient-to-r from-green-500 to-emerald-500"
-                  }`}
-                >
-                  Sacred Solution {selectedCell}
-                </h3>
-                <div
-                  className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${
-                    selectedCell.endsWith("A")
-                      ? "bg-gradient-to-r from-pink-400 to-red-500 text-white"
-                      : "bg-gradient-to-r from-green-400 to-emerald-400 text-white"
-                  }`}
-                >
-                  Ancient Wisdom
-                </div>
+            <div className="p-6 text-center">
+              <h3 className={`text-xl font-black bg-clip-text text-transparent mb-2 ${
+                selectedCell.endsWith("A")
+                  ? "bg-gradient-to-r from-pink-500 to-red-500"
+                  : "bg-gradient-to-r from-green-500 to-emerald-500"
+              }`}>
+                Sacred Solution {selectedCell}
+              </h3>
+
+              <div className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${
+                selectedCell.endsWith("A")
+                  ? "bg-gradient-to-r from-pink-400 to-red-500 text-white"
+                  : "bg-gradient-to-r from-green-400 to-emerald-400 text-white"
+              }`}>
+                Ancient Wisdom
               </div>
 
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 mb-6 border border-orange-200">
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 my-6 border border-orange-200">
                 <p className="text-black font-medium text-sm leading-relaxed">
-                  {solutionsData[selectedCell] ||
-                    "This sacred solution is being prepared by the ancient spirits. Please check back soon for your divine message."}
+                  {solutionsData[selectedCell] || "This sacred solution is being prepared. Please check back soon."}
                 </p>
               </div>
 
@@ -1080,6 +1044,7 @@ export default function AdminProfile() {
           </Card>
         </div>
       )}
+
     </div>
   );
 }

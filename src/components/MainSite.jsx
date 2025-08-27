@@ -97,59 +97,35 @@ function MainSite({ user, onLogout }) {
         {/* Top Section */}
         <div className="text-center mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-6">
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              {/* Logo + Numbers */}
-              <div className="relative">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-black flex items-center justify-center shadow-2xl transform hover:scale-105 transition-all duration-300 relative">
-                  {[1, 2, 3].map((num, idx) => {
-                    const positions = [
-                      { top: "-0.5rem", left: "50%", transform: "-translate-x-1/2" },
-                      { top: "50%", right: "-0.5rem", transform: "-translate-y-1/2" },
-                      { bottom: "-0.5rem", left: "50%", transform: "-translate-x-1/2" },
-                    ];
-                    const selected = selectedNumbers.includes(num);
-                    return (
-                      <div
-                        key={num}
-                        className={`absolute text-white font-black text-2xl w-8 h-8 flex items-center justify-center rounded-full cursor-pointer transition-all duration-300 ${
-                          selected ? "bg-yellow-400 text-black scale-110" : ""
-                        }`}
-                        style={positions[idx]}
-                        onClick={() => handleNumberClick(num)}
-                      >
-                        {num}
-                      </div>
-                    );
-                  })}
-                  <div className="relative cursor-pointer" onClick={() => handleNumberClick(4)}>
-                    <div className="w-16 h-10 border-2 border-white rounded-full flex items-center justify-center bg-white">
-                      <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                        <span
-                          className={`text-white font-black text-lg ${
-                            selectedNumbers.includes(4) ? "bg-yellow-400 rounded-full p-1 text-black" : ""
-                          }`}
-                        >
-                          4
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute inset-0 rounded-full bg-white opacity-20 blur-xl animate-pulse"></div>
-              </div>
+           <div className="flex flex-col sm:flex-row items-center gap-6">
+  {/* Logo */}
+  <div className="relative">
+    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-black flex items-center justify-center shadow-2xl transform transition-all duration-500 hover:scale-110 hover:rotate-6 relative overflow-hidden">
+      {/* Logo Image */}
+      <img
+        src="/Sacred-Geomancy-Solutions/logo23.jpg" // <-- Replace with your logo path
+        alt="Geomancy Logo"
+        className="w-full h-full object-cover rounded-full transition-all duration-500 hover:brightness-125 hover:drop-shadow-2xl"
+      />
+    </div>
+    {/* Glow / pulse effect */}
+    <div className="absolute inset-0 rounded-full bg-white opacity-20 blur-xl animate-pulse"></div>
+  </div>
 
-              <div className="text-center sm:text-left">
-                <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-black drop-shadow-2xl leading-tight tracking-wider">
-                  GEOMANCY
-                </h1>
-                <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-black drop-shadow-2xl leading-tight tracking-wider">
-                  SOLUTIONS
-                </h1>
-                <p className="text-2xl sm:text-3xl font-bold text-black drop-shadow-lg tracking-widest">
-                  TO SPIRITUAL ISSUES
-                </p>
-              </div>
-            </div>
+  {/* Text */}
+  <div className="text-center sm:text-left">
+    <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-black drop-shadow-2xl leading-tight tracking-wider">
+      GEOMANCY
+    </h1>
+    <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-black drop-shadow-2xl leading-tight tracking-wider">
+      SOLUTIONS
+    </h1>
+    <p className="text-2xl sm:text-3xl font-bold text-black drop-shadow-lg tracking-widest">
+      TO SPIRITUAL ISSUES
+    </p>
+  </div>
+</div>
+
 
             <button
               onClick={handleTopButtonClick}

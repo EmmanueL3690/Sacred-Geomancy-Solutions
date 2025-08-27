@@ -2,43 +2,63 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function LoginForm({ onLogin }) {
+  const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email) return;
-    onLogin(email);
-    navigate("/"); // after login → go to main site
+    if (!fullname || !email || !password) return;
+    onLogin({ fullname, email, password });
+    navigate("/"); // goes to main site
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-blue-800 to-red-500 p-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-lg w-80"
+        className="bg-white/90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl max-w-md w-full space-y-6"
       >
-            <div className="text-center mb-8">
-            <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent mb-2">
-              Numbers to Solutions
-            </h1>
-            <p className="text-sm sm:text-base font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Your Problem, Your Solution in 4 Numbers
-            </p>
-          </div>
-  
-          
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+            Numbers to Solutions
+          </h1>
+          <p className="text-sm sm:text-base font-bold text-gray-700">
+            Enter your details to unlock your spiritual guidance
+          </p>
+        </div>
+
+        {/* Full Name */}
+        <input
+          type="text"
+          placeholder="Full Name"
+          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
+          value={fullname}
+          onChange={(e) => setFullname(e.target.value)}
+        />
+
+        {/* Email */}
         <input
           type="email"
-          placeholder="Enter email"
-          className="w-full border p-2 mb-4 rounded"
+          placeholder="Email"
+          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
+        {/* Password */}
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-orange-400 outline-none"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
         <button
           type="submit"
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded"
+          className="w-full py-3 bg-gradient-to-r from-orange-400 to-red-500 hover:from-red-500 hover:to-orange-400 text-white font-bold rounded-lg transition-all duration-300"
         >
           Login
         </button>

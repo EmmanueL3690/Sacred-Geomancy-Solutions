@@ -7,11 +7,12 @@ import AdminProfile from "./components/AdminProfile";
 function App() {
   const [user, setUser] = useState(null);
 
-  const handleLogin = (email) => {
-    if (email === "geomancysolutions@gmail.com") {
-      setUser({ email, role: "admin", name: "Admin" });
+  const handleLogin = ({ email, fullname, password }) => {
+    // You can replace this with real auth later
+    if (email === "geomancysolutions@gmail.com" && password === "admin123") {
+      setUser({ email, role: "admin", name: fullname });
     } else {
-      setUser({ email, role: "user", name: "User" });
+      setUser({ email, role: "user", name: fullname });
     }
   };
 
@@ -34,7 +35,7 @@ function App() {
       {/* Login Page */}
       <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
 
-      {/* Admin Profile (only admin can access) */}
+      {/* Admin Profile (only admin) */}
       <Route
         path="/admin"
         element={
@@ -57,3 +58,4 @@ function App() {
 }
 
 export default App;
+
