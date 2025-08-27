@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NumberGrid from "./NumberGrid.jsx";
-import SolutionModal from "../components/SolutionModal.jsx";
-import UserTestimonies from "../components/UserTestimonies.jsx";
+import SolutionModal from "./solutionsData.js";
+import UserTestimonies from "./UserPage.jsx";
 import VideoPlayer from "../components/VideoPlayer.jsx";
 
 function Home({ user, onLogout }) {

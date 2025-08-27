@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import NumberGrid from "./NumberGrid.jsx";
 // import SolutionModal from "./SolutionModal.jsx";
-import UserTestimonies from "./UserTestimonies.jsx";
+import UserTestimonies from "./UserPage.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
+import UserPage from "./UserPage.jsx";
 
 function MainSite({ user, onLogout }) {
   const navigate = useNavigate();
@@ -257,7 +258,7 @@ function MainSite({ user, onLogout }) {
         )} */}
 
         {/* Testimonies */}
-        <UserTestimonies selectedNumbers={selectedNumbers} userData={user} />
+        <UserPage selectedNumbers={selectedNumbers} userData={user} />
 
         
       </div>

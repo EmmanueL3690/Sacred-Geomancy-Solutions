@@ -843,131 +843,161 @@
 // }
 
 // src/components/UserTestimonies.jsx
+// src/components/AdminProfile.jsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 import { Card } from "./ui/Card.jsx";
 
-export default function AdminPage({ user, onLogout }) {
-  const [userDetails, setUserDetails] = useState([]);
-  const [userTestimonies, setUserTestimonies] = useState([]);
+// Sacred Numbers Setup (1–16 × A–P)
+const letters = "ABCDEFGHIJKLMNOP".split("");
+const numbers = Array.from({ length: 16 }, (_, i) => i + 1);
+
+export default function AdminProfile() {
+  const [users, setUsers] = useState([]);
+  const [testimonies, setTestimonies] = useState([]);
+  const [solutionsData, setSolutionsData] = useState({});
   const [selectedCell, setSelectedCell] = useState(null);
 
-  const numbers = Array.from({ length: 16 }, (_, i) => i + 1);
-  const letters = Array.from({ length: 16 }, (_, i) => String.fromCharCode(65 + i));
-
-  const solutionsData = {
-    // H solutions
-    "1H": "Ewu nla ti yio sele. Aare yoo se enikan, sugbon yoo gbadun",
-    "2H": "Nkan ti o lo lowo re yoo pada. Onibeere yo ma se inawo anadanu",
-    "3H": "Yoo ri ore ni ojo kewa osu ti n bo, ki o beloun ki ewu nla masele si o",
-    "4H": "Mura tori wahala ota. Dukia wa kan nbe nita, ki a gba",
-    "5H": "Ko belorun lori omo, enikan yoo saare, sugbon ko ni ku",
-    "6H": "Enikan yoo ku, ki a ma losi ibe",
-    "7H": "Iyawo re yoo ko sile, Obinrin kan nje ni bebe iku",
-    "8H": "Ija adugbo ti yoo kan iwo papa. Ki onibeere yi se saara lori iku",
-    "9H": "Ma paya irorun nbo, inawo tabi fifo nkan to robe lorun ki awon ota maa",
-    // A solutions
-    "1A": "Oro obinrin, ki Olorun bo asiri, on nwa nkan lo si ibikan, onse iranlowo fun enikan. Emi Onibeere yoo gun",
-    "2A": "Alakala, ounje oju orun, alawada, timo fi eeyan se yeye, ti ko serious, ro eyan pin, A LE DA NI IMORAN PE KO MA SE TIATA",
-    // ... Add the rest as in your previous list
-  };
-
+  // Fetch User Details (Live Updates)
   useEffect(() => {
-    const detailsQuery = query(collection(db, "userDetails"), orderBy("timestamp", "desc"));
-    const unsubDetails = onSnapshot(detailsQuery, (snapshot) =>
-      setUserDetails(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
-    );
+    const q = query(collection(db, "users"), orderBy("updatedAt", "desc"));
+    const unsub = onSnapshot(q, (snapshot) => {
+      setUsers(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+    return unsub;
+  }, []);
 
-    const testimonyQuery = query(collection(db, "userTestimonies"), orderBy("timestamp", "desc"));
-    const unsubTestimony = onSnapshot(testimonyQuery, (snapshot) =>
-      setUserTestimonies(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
-    );
+  // Fetch User Testimonies (Live Updates)
+  useEffect(() => {
+    const q = query(collection(db, "testimonies"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snapshot) => {
+      setTestimonies(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+    return unsub;
+  }, []);
 
-    return () => {
-      unsubDetails();
-      unsubTestimony();
-    };
+  // Import Sacred Solutions (Leave unchanged)
+  useEffect(() => {
+    import("./solutionsData.js").then((module) =>
+      setSolutionsData(module.solutionsData)
+    );
   }, []);
 
   const handleDelete = async (collectionName, id) => {
-    if (confirm("Are you sure you want to delete this?")) {
-      await deleteDoc(doc(db, collectionName, id));
-    }
+    await deleteDoc(doc(db, collectionName, id));
   };
 
-  const handleCellClick = (number, letter) => setSelectedCell(`${number}${letter}`);
-  const closeModal = () => setSelectedCell(null);
+  const handleCellClick = (number, letter) => {
+    setSelectedCell(`${number}${letter}`);
+  };
+
+  const closeModal = () => {
+    setSelectedCell(null);
+  };
+
+  const renderStars = (rating) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <span
+        key={i}
+        className={`text-lg ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
+      >
+        ⭐
+      </span>
+    ));
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="flex justify-between items-center p-4 bg-gray-900 text-white shadow sticky top-0 z-10">
-        <h1 className="text-xl font-bold">Admin Profile</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm sm:text-base">👤 {user.email}</span>
-          <button
-            onClick={onLogout}
-            className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+    <div className="max-w-7xl mx-auto p-4 space-y-8">
+      {/* Heading */}
+      <h1 className="text-3xl sm:text-4xl font-black text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">
+        Admin Dashboard
+      </h1>
 
-      <main className="flex-grow p-4 sm:p-6 space-y-8 overflow-auto">
-        {/* User Details */}
-        <div>
-          <h2 className="text-2xl font-black mb-4">User Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {userDetails.map((detail) => (
-              <Card key={detail.id} className="p-4 border rounded-lg relative">
-                <p><strong>Name:</strong> {detail.name}</p>
-                <p><strong>Age:</strong> {detail.age}</p>
-                <p><strong>Numbers Picked:</strong> {detail.numbersPicked}</p>
-                <p><strong>Location:</strong> {detail.location}</p>
+      {/* User Details Section */}
+      <section>
+        <h2 className="text-xl font-black mb-4">👥 User Details</h2>
+        {users.length === 0 ? (
+          <p className="text-gray-600">No user details yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {users.map((user) => (
+              <Card
+                key={user.id}
+                className="p-4 relative bg-gradient-to-br from-yellow-50 to-orange-100 shadow-lg rounded-xl border-2 border-orange-200"
+              >
+                <p className="font-bold text-lg">{user.name} ({user.age})</p>
+                <p className="text-sm text-gray-700">{user.location}</p>
+                <p className="mt-2 font-semibold text-orange-600">
+                  Picked Number: {user.numberPicked}
+                </p>
                 <button
-                  onClick={() => handleDelete("userDetails", detail.id)}
-                  className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+                  onClick={() => handleDelete("users", user.id)}
+                  className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Delete
                 </button>
               </Card>
             ))}
           </div>
-        </div>
+        )}
+      </section>
 
-        {/* User Testimonies */}
-        <div>
-          <h2 className="text-2xl font-black mb-4">User Testimonies</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {userTestimonies.map((testimony) => (
-              <Card key={testimony.id} className="p-4 border rounded-lg relative">
-                <p><strong>Rating:</strong> {testimony.rating}</p>
-                <p><strong>Testimony:</strong> {testimony.testimony}</p>
+      {/* User Testimonies Section */}
+      <section>
+        <h2 className="text-xl font-black mb-4">💬 User Testimonies</h2>
+        {testimonies.length === 0 ? (
+          <p className="text-gray-600">No testimonies yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {testimonies.map((t) => (
+              <Card
+                key={t.id}
+                className="p-4 relative bg-gradient-to-br from-green-50 to-emerald-100 shadow-lg rounded-xl border-2 border-emerald-200"
+              >
+                <div className="mb-2">{renderStars(t.rating)}</div>
+                <p className="text-gray-800">{t.message}</p>
+                <p className="text-sm text-gray-600 mt-2">— {t.name}</p>
                 <button
-                  onClick={() => handleDelete("userTestimonies", testimony.id)}
-                  className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded"
+                  onClick={() => handleDelete("testimonies", t.id)}
+                  className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Delete
                 </button>
               </Card>
             ))}
           </div>
-        </div>
+        )}
+      </section>
 
-        {/* Sacred Number Table */}
-        <div>
-          <h2 className="text-2xl font-black mb-4">Sacred Solutions Archive</h2>
-          <Card className="bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-orange-200 overflow-auto">
-            <div className="p-4 sm:p-6 min-w-[800px]">
+      {/* Sacred Solutions Archive (unchanged) */}
+      <section>
+        <h2 className="text-xl sm:text-2xl font-black text-center mb-6 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+          Sacred Solutions Archive
+        </h2>
+
+        <Card className="bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-orange-200 overflow-hidden">
+          <div className="p-4 sm:p-6 overflow-x-auto">
+            <div className="min-w-[800px]">
               {/* Header Row */}
               <div className="grid grid-cols-17 gap-1 mb-2">
-                <div className="aspect-square bg-purple-500 text-white font-black text-xs flex items-center justify-center rounded">#</div>
+                <div className="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 text-white font-black text-xs flex items-center justify-center rounded">
+                  #
+                </div>
                 {letters.map((letter) => (
-                  <div key={letter} className="aspect-square bg-blue-500 text-white font-black text-xs flex items-center justify-center rounded">
+                  <div
+                    key={letter}
+                    className="aspect-square bg-gradient-to-br from-blue-500 to-purple-500 text-white font-black text-xs flex items-center justify-center rounded"
+                  >
                     {letter}
                   </div>
                 ))}
@@ -976,11 +1006,14 @@ export default function AdminPage({ user, onLogout }) {
               {/* Data Rows */}
               {numbers.map((number) => (
                 <div key={number} className="grid grid-cols-17 gap-1 mb-1">
-                  <div className="aspect-square bg-green-500 text-white font-black text-xs flex items-center justify-center rounded">{number}</div>
+                  <div className="aspect-square bg-gradient-to-br from-green-500 to-emerald-500 text-white font-black text-xs flex items-center justify-center rounded">
+                    {number}
+                  </div>
                   {letters.map((letter) => {
                     const cellKey = `${number}${letter}`;
                     const hasSolution = solutionsData[cellKey];
                     const isA = cellKey.endsWith("A");
+
                     return (
                       <button
                         key={cellKey}
@@ -988,9 +1021,9 @@ export default function AdminPage({ user, onLogout }) {
                         className={`aspect-square text-xs font-bold rounded transition-all duration-200 hover:scale-105 ${
                           hasSolution
                             ? isA
-                              ? "bg-pink-400 text-white shadow-md hover:bg-pink-500"
-                              : "bg-green-400 text-white shadow-md hover:bg-green-500"
-                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                              ? "bg-gradient-to-br from-pink-400 to-red-500 text-white shadow-md hover:from-pink-500 hover:to-red-600"
+                              : "bg-gradient-to-br from-green-400 to-emerald-400 text-white shadow-md hover:from-green-500 hover:to-emerald-500"
+                            : "bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600 hover:from-gray-300 hover:to-gray-400"
                         }`}
                       >
                         {hasSolution ? "✓" : "○"}
@@ -1000,36 +1033,53 @@ export default function AdminPage({ user, onLogout }) {
                 </div>
               ))}
             </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Solution Modal */}
+      {selectedCell && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="bg-white/95 backdrop-blur-sm max-w-md w-full shadow-2xl border-2 border-orange-200">
+            <div className="p-6">
+              <div className="text-center mb-4">
+                <h3
+                  className={`text-xl font-black bg-clip-text text-transparent mb-2 ${
+                    selectedCell.endsWith("A")
+                      ? "bg-gradient-to-r from-pink-500 to-red-500"
+                      : "bg-gradient-to-r from-green-500 to-emerald-500"
+                  }`}
+                >
+                  Sacred Solution {selectedCell}
+                </h3>
+                <div
+                  className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${
+                    selectedCell.endsWith("A")
+                      ? "bg-gradient-to-r from-pink-400 to-red-500 text-white"
+                      : "bg-gradient-to-r from-green-400 to-emerald-400 text-white"
+                  }`}
+                >
+                  Ancient Wisdom
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 mb-6 border border-orange-200">
+                <p className="text-black font-medium text-sm leading-relaxed">
+                  {solutionsData[selectedCell] ||
+                    "This sacred solution is being prepared by the ancient spirits. Please check back soon for your divine message."}
+                </p>
+              </div>
+
+              <button
+                onClick={closeModal}
+                className="w-full py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-bold rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
           </Card>
         </div>
-
-        {/* Solution Modal */}
-        {selectedCell && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <Card className="bg-white/95 backdrop-blur-sm max-w-md w-full shadow-2xl border-2 border-orange-200">
-              <div className="p-6">
-                <div className="text-center mb-4">
-                  <h3 className={`text-xl font-black bg-clip-text text-transparent mb-2 ${selectedCell.endsWith("A") ? "bg-pink-500" : "bg-green-500"}`}>
-                    Sacred Solution {selectedCell}
-                  </h3>
-                  <div className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${selectedCell.endsWith("A") ? "bg-pink-400 text-white" : "bg-green-400 text-white"}`}>
-                    Ancient Wisdom
-                  </div>
-                </div>
-                <div className="bg-yellow-50 rounded-lg p-4 mb-6 border border-orange-200">
-                  <p className="text-black text-sm leading-relaxed">{solutionsData[selectedCell] || "This sacred solution is being prepared by the ancient spirits."}</p>
-                </div>
-                <button
-                  onClick={closeModal}
-                  className="w-full py-3 bg-gray-500 text-white font-bold rounded-lg hover:bg-gray-600"
-                >
-                  Close
-                </button>
-              </div>
-            </Card>
-          </div>
-        )}
-      </main>
+      )}
     </div>
   );
 }
