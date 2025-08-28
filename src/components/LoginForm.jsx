@@ -10,8 +10,14 @@ function LoginForm({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!fullname || !email || !password) return;
-    onLogin({ fullname, email, password });
-    navigate("/"); // goes to main site
+
+    const userData = { fullname, email, password };
+    onLogin(userData);
+
+    // Save in localStorage (redundant, but keeps LoginForm independent)
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    navigate("/"); // Redirect to main site
   };
 
   return (

@@ -857,7 +857,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { Card } from "./ui/Card.jsx";
-import { solutionsData } from "./solutionsData.js"; // ✅ import your full solutionsData
+import { solutionsData } from "./solutionsData.js";
 
 // Sacred Numbers Setup (1–16 × A–P)
 const letters = "ABCDEFGHIJKLMNOP".split("");
@@ -868,9 +868,9 @@ export default function AdminProfile() {
   const [testimonies, setTestimonies] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
 
-  // Fetch Users
+  // Fetch User Details
   useEffect(() => {
-    const q = query(collection(db, "users"), orderBy("updatedAt", "desc"));
+    const q = query(collection(db, "userDetails"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, (snapshot) => {
       setUsers(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
@@ -903,7 +903,6 @@ export default function AdminProfile() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 space-y-8">
-
       {/* Heading */}
       <h1 className="text-3xl sm:text-4xl font-black text-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">
         Admin Dashboard
@@ -920,11 +919,13 @@ export default function AdminProfile() {
               <Card key={user.id} className="p-4 relative bg-gradient-to-br from-yellow-50 to-orange-100 shadow-lg rounded-xl border-2 border-orange-200">
                 <p className="font-bold text-lg">{user.name} ({user.age})</p>
                 <p className="text-sm text-gray-700">{user.location}</p>
+                <p className="text-sm text-gray-700">{user.email}</p>
+                <p className="text-sm text-gray-700">{user.phone}</p>
                 <p className="mt-2 font-semibold text-orange-600">
-                  Picked Number: {user.numberPicked}
+                  Picked Numbers: {user.numberPicked?.join(", ")}
                 </p>
                 <button
-                  onClick={() => handleDelete("users", user.id)}
+                  onClick={() => handleDelete("userDetails", user.id)}
                   className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Delete
@@ -958,93 +959,6 @@ export default function AdminProfile() {
           </div>
         )}
       </section>
-
-      {/* Sacred Solutions Grid */}
-      <section>
-        <h2 className="text-xl sm:text-2xl font-black text-center mb-6 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-          Sacred Solutions Archive
-        </h2>
-
-        <Card className="bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-orange-200 overflow-hidden">
-          <div className="p-4 sm:p-6 overflow-x-auto">
-            <div className="min-w-[800px]">
-              {/* Header Row */}
-              <div className="grid grid-cols-17 gap-1 mb-2">
-                <div className="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 text-white font-black text-xs flex items-center justify-center rounded">#</div>
-                {letters.map((letter) => (
-                  <div key={letter} className="aspect-square bg-gradient-to-br from-blue-500 to-purple-500 text-white font-black text-xs flex items-center justify-center rounded">{letter}</div>
-                ))}
-              </div>
-
-              {/* Data Rows */}
-              {numbers.map((number) => (
-                <div key={number} className="grid grid-cols-17 gap-1 mb-1">
-                  <div className="aspect-square bg-gradient-to-br from-green-500 to-emerald-500 text-white font-black text-xs flex items-center justify-center rounded">{number}</div>
-                  {letters.map((letter) => {
-                    const cellKey = `${number}${letter}`;
-                    const hasSolution = solutionsData[cellKey];
-
-                    return (
-                      <button
-                        key={cellKey}
-                        onClick={() => handleCellClick(number, letter)}
-                        className={`aspect-square text-xs font-bold rounded transition-all duration-200 hover:scale-105 ${
-                          hasSolution
-                            ? cellKey.endsWith("A")
-                              ? "bg-gradient-to-br from-pink-400 to-red-500 text-white shadow-md hover:from-pink-500 hover:to-red-600"
-                              : "bg-gradient-to-br from-green-400 to-emerald-400 text-white shadow-md hover:from-green-500 hover:to-emerald-500"
-                            : "bg-gray-200 text-gray-600 hover:from-gray-300 hover:to-gray-400"
-                        }`}
-                      >
-                        {hasSolution ? "✓" : "○"}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* Solution Modal */}
-      {selectedCell && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <Card className="bg-white/95 backdrop-blur-sm max-w-md w-full shadow-2xl border-2 border-orange-200">
-            <div className="p-6 text-center">
-              <h3 className={`text-xl font-black bg-clip-text text-transparent mb-2 ${
-                selectedCell.endsWith("A")
-                  ? "bg-gradient-to-r from-pink-500 to-red-500"
-                  : "bg-gradient-to-r from-green-500 to-emerald-500"
-              }`}>
-                Sacred Solution {selectedCell}
-              </h3>
-
-              <div className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${
-                selectedCell.endsWith("A")
-                  ? "bg-gradient-to-r from-pink-400 to-red-500 text-white"
-                  : "bg-gradient-to-r from-green-400 to-emerald-400 text-white"
-              }`}>
-                Ancient Wisdom
-              </div>
-
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 my-6 border border-orange-200">
-                <p className="text-black font-medium text-sm leading-relaxed">
-                  {solutionsData[selectedCell] || "This sacred solution is being prepared. Please check back soon."}
-                </p>
-              </div>
-
-              <button
-                onClick={closeModal}
-                className="w-full py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-bold rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-300"
-              >
-                Close
-              </button>
-            </div>
-          </Card>
-        </div>
-      )}
-
     </div>
   );
 }
