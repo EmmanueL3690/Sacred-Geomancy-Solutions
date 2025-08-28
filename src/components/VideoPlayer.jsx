@@ -8,9 +8,10 @@ export default function VideoPlayer() {
   const videoRef = useRef(null)
 
 const videos = {
-  english: import.meta.env.BASE_URL + "videos/video1.mp4",
-  yoruba: import.meta.env.BASE_URL + "videos/video_yo.mp4",
+  english: "/Sacred-Geomancy-Solutions/videos/video1.mp4",
+  yoruba: "/Sacred-Geomancy-Solutions/videos/video_yo.mp4",
 };
+
 
 
 

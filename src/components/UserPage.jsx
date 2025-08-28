@@ -145,7 +145,7 @@ export default function UserPage() {
         <button type="submit"
           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg"
           disabled={numberPicked.length !== 4}>
-          Save Details
+          Submit Details
         </button>
         {detailStatus && <p className="mt-2 text-sm text-center">{detailStatus}</p>}
       </form>
@@ -159,7 +159,7 @@ export default function UserPage() {
           onChange={(e) => setRating(Number(e.target.value))}
           className="w-full mb-3 p-2 border rounded" min="1" max="5" required />
         <button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg">
-          Submit Testimony
+          Share Testimony
         </button>
         {testimonyStatus && <p className="mt-2 text-sm text-center">{testimonyStatus}</p>}
       </form>
