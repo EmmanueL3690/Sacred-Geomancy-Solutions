@@ -26,3 +26,4 @@ pnpm-debug.log*
 .cache/
 .eslintcache
 .parcel-cache/
+.vercel

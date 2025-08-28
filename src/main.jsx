@@ -6,7 +6,7 @@ import "./styles/index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter basename="/Sacred-Geomancy-Solutions">
+    <BrowserRouter>
       <App />
     </BrowserRouter>
   </React.StrictMode>

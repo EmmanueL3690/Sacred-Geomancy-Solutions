@@ -19,11 +19,20 @@ export default function UserPage() {
   const [rating, setRating] = useState(0);
   const [testimonyStatus, setTestimonyStatus] = useState("");
 
-  // Number Grid State
+  // Number Grid State (use custom grid)
+  const initialGrid = [
+    [12, 47, 3, 21, 8, 33, 59, 1],
+    [27, 6, 40, 55, 19, 14, 62, 31],
+    [5, 49, 28, 11, 36, 45, 23, 60],
+    [32, 18, 7, 43, 25, 2, 48, 63],
+    [22, 13, 61, 35, 9, 30, 41, 57],
+    [4, 44, 10, 29, 15, 39, 24, 50],
+    [52, 17, 42, 38, 20, 34, 56, 46],
+    [26, 53, 16, 64, 54, 51, 37, 58],
+  ];
+
   const [selectedNumbers, setSelectedNumbers] = useState([]);
-  const [numberGrid, setNumberGrid] = useState(
-    Array.from({ length: 64 }, (_, i) => i + 1)
-  );
+  const [numberGrid, setNumberGrid] = useState(initialGrid.flat());
 
   // Shuffle Number Grid
   const shuffleGrid = () => {
@@ -72,14 +81,14 @@ export default function UserPage() {
     }
   };
 
-  // Submit Testimony
+  // Submit Testimony (include name)
   const handleTestimonySubmit = async (e) => {
     e.preventDefault();
     setTestimonyStatus("Submitting...");
 
     try {
       await addDoc(collection(db, "testimonies"), {
-        name,
+        name,   // ✅ now admin can see who sent it
         message: testimony,
         rating,
         createdAt: serverTimestamp(),
@@ -95,9 +104,28 @@ export default function UserPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-6 flex flex-col items-center">
+      {/* Top Heading */}
       <h1 className="text-2xl sm:text-3xl font-extrabold text-center mb-6 text-orange-700">
-        Discover Your Life in 4 Numbers
+        <b>Discover Your Life in 4 Numbers</b>
       </h1>
+
+      {/* HOW IT WORKS SECTION */}
+      <div className="bg-gradient-to-br from-orange-400 to-red-500 text-white p-6 rounded-2xl shadow-xl w-full max-w-3xl mb-6">
+        <h2 className="text-xl sm:text-2xl font-extrabold mb-4 text-center">
+          HOW IT WORKS
+        </h2>
+        <ol className="list-decimal list-inside space-y-2 font-medium">
+          <li>Look at the number chart below.</li>
+          <li>Pick 4 numbers — one at a time.</li>
+          <li>
+            People choosing numbers are not just picking at random — they are
+            entering a "realm" where numbers reveal their problems and solutions.
+          </li>
+          <li className="font-bold text-blue-200">
+            Each selection reshuffles the realm — embrace the chaos!
+          </li>
+        </ol>
+      </div>
 
       {/* Number Grid */}
       <div className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-orange-300 w-full max-w-3xl mb-6">
@@ -128,8 +156,14 @@ export default function UserPage() {
       </div>
 
       {/* User Details Form */}
-      <form onSubmit={handleDetailSubmit} className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-xl mb-6">
-        <h2 className="text-xl font-bold mb-4 text-orange-700">Your Details</h2>
+      <form
+        onSubmit={handleDetailSubmit}
+        className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-xl mb-6"
+      >
+        <h2 className="text-xl font-bold mb-4 text-orange-700">
+          Share Your Mystical Number
+        </h2>
+
         <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}
           className="w-full mb-3 p-2 border rounded" required />
         <input type="number" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)}
@@ -151,7 +185,10 @@ export default function UserPage() {
       </form>
 
       {/* Testimony Form */}
-      <form onSubmit={handleTestimonySubmit} className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-xl">
+      <form
+        onSubmit={handleTestimonySubmit}
+        className="w-full max-w-lg bg-white p-6 rounded-2xl shadow-xl"
+      >
         <h2 className="text-xl font-bold mb-4 text-gray-800">Share Your Testimony</h2>
         <textarea placeholder="Write your testimony..." value={testimony} onChange={(e) => setTestimony(e.target.value)}
           className="w-full mb-3 p-2 border rounded" required />
@@ -166,3 +203,4 @@ export default function UserPage() {
     </div>
   );
 }
+

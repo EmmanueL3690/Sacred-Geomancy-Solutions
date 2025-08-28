@@ -6,6 +6,7 @@ import UserTestimonies from "./UserPage.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
 import UserPage from "./UserPage.jsx";
 
+
 function MainSite({ user, onLogout }) {
   const navigate = useNavigate();
   const [selectedNumbers, setSelectedNumbers] = useState([]);
@@ -101,11 +102,15 @@ function MainSite({ user, onLogout }) {
   <div className="relative">
     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-black flex items-center justify-center shadow-2xl transform transition-all duration-500 hover:scale-110 hover:rotate-6 relative overflow-hidden">
       {/* Logo Image */}
-      <img
-        src="/Sacred-Geomancy-Solutions/logo23.jpg" // <-- Replace with your logo path
-        alt="Geomancy Logo"
-        className="w-full h-full object-cover rounded-full transition-all duration-500 hover:brightness-125 hover:drop-shadow-2xl"
-      />
+
+
+<img
+  src="/logo23.jpg" // ✅ relative to public/
+  alt="Geomancy Logo"
+  className="w-full h-full object-cover rounded-full transition-all duration-500 hover:brightness-125 hover:drop-shadow-2xl"
+/>
+
+
     </div>
     {/* Glow / pulse effect */}
     <div className="absolute inset-0 rounded-full bg-white opacity-20 blur-xl animate-pulse"></div>
