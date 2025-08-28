@@ -1,41 +1,41 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
+import { useState, useRef } from "react";
 
 export default function VideoPlayer() {
-  const [currentLanguage, setCurrentLanguage] = useState("english")
-  const [isLoading, setIsLoading] = useState(false)
-  const videoRef = useRef(null)
+  const [currentLanguage, setCurrentLanguage] = useState("english");
+  const [isLoading, setIsLoading] = useState(false);
+  const videoRef = useRef(null);
 
-const videos = {
-  english: "/Sacred-Geomancy-Solutions/videos/video1.mp4",
-  yoruba: "/Sacred-Geomancy-Solutions/videos/video_yo.mp4",
-};
-
-
-
+  // Use Vite new URL() method for static assets
+  const videos = {
+    english: new URL("/videos/video1.mp4", import.meta.url).href,
+    yoruba: new URL("/videos/video_yo.mp4", import.meta.url).href,
+  };
 
   const handleLanguageSwitch = (language) => {
-    setIsLoading(true)
-    setCurrentLanguage(language)
+    if (language === currentLanguage) return;
+
+    setIsLoading(true);
+    setCurrentLanguage(language);
 
     if (videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-      videoRef.current.load()
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      videoRef.current.load();
 
       const handleLoadedData = () => {
-        setIsLoading(false)
-        videoRef.current.play()
-        videoRef.current.removeEventListener("loadeddata", handleLoadedData)
-      }
+        setIsLoading(false);
+        videoRef.current.play();
+        videoRef.current.removeEventListener("loadeddata", handleLoadedData);
+      };
 
-      videoRef.current.addEventListener("loadeddata", handleLoadedData)
+      videoRef.current.addEventListener("loadeddata", handleLoadedData);
 
-      // Fallback in case load event fails
-      setTimeout(() => setIsLoading(false), 3000)
+      // Fallback if load event fails
+      setTimeout(() => setIsLoading(false), 3000);
     }
-  }
+  };
 
   return (
     <div className="bg-black/60 backdrop-blur-lg rounded-3xl p-6 sm:p-8 mb-10 border-2 border-white/30 shadow-2xl relative overflow-hidden">
@@ -113,5 +113,5 @@ const videos = {
         </div>
       </div>
     </div>
-  )
+  );
 }
