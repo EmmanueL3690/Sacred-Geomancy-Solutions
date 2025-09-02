@@ -109,33 +109,36 @@ export default function UserPage() {
         <b>Discover Your Life in 4 Numbers</b>
       </h1>
 
-      {/* HOW IT WORKS SECTION */}
-      <div className="bg-gradient-to-br from-orange-400 to-red-500 text-white p-6 rounded-2xl shadow-xl w-full max-w-3xl mb-6">
-        <h2 className="text-xl sm:text-2xl font-extrabold mb-4 text-center">
-          HOW IT WORKS
-        </h2>
-        <ol className="list-decimal list-inside space-y-2 font-medium">
-          <li>Look at the number chart below.</li>
-          <li>Pick 4 numbers — one at a time.</li>
-          <li>
-            People choosing numbers are not just picking at random — they are
-            entering a "realm" where numbers reveal their problems and solutions.
-          </li>
-          <li className="font-bold text-blue-200">
-            Each selection reshuffles the realm — embrace the chaos!
-          </li>
-        </ol>
-      </div>
+{/* Procedure Image Section with Background */}
+<div
+  className="w-full max-w-3xl mb-6 text-center rounded-2xl shadow-2xl overflow-hidden relative bg-cover bg-center"
+  style={{
+    backgroundImage: `url(${import.meta.env.BASE_URL}realm.jpg)`,
+  }}
+>
+  {/* Overlay for readability */}
+  <div className="absolute inset-0 bg-black/60"></div>
 
-      {/* Procedure Image Section */}
-<div className="w-full max-w-3xl mb-6 text-center">
-  <h2 className="text-2xl font-extrabold text-orange-700 mb-2">Procedure</h2>
-  <h3 className="text-lg font-semibold text-gray-700 mb-4">How to do it</h3>
-  <img
-    src={`${import.meta.env.BASE_URL}realm.jpg`}
-    alt="Procedure Illustration"
-    className="rounded-2xl shadow-2xl mx-auto"
-  />
+  {/* Content on top of background */}
+  <div className="relative z-10 p-8 text-white">
+    <h2 className="text-2xl font-extrabold text-orange-300 mb-2">Procedure</h2>
+
+
+    <h2 className="text-xl sm:text-2xl font-extrabold mb-4 text-center">
+      HOW TO DO IT
+    </h2>
+    <ol className="list-decimal list-inside space-y-3 font-bold text-lg leading-relaxed">
+      <li>Look at the number chart below.</li>
+      <li>Pick 4 numbers — one at a time.</li>
+      <li>
+        People choosing numbers are not just picking at random — they are
+        entering a "realm" where numbers reveal their problems and solutions.
+      </li>
+      <li className="text-yellow-300">
+        Each selection reshuffles the realm — embrace the chaos!
+      </li>
+    </ol>
+  </div>
 </div>
 
       {/* Number Grid */}
