@@ -103,7 +103,7 @@ export default function UserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 p-6 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-black-100 p-6 flex flex-col items-center">
       {/* Top Heading */}
       <h1 className="text-2xl sm:text-3xl font-extrabold text-center mb-6 text-orange-700">
         <b>Discover Your Life in 4 Numbers</b>
@@ -128,32 +128,42 @@ export default function UserPage() {
       </div>
 
       {/* Number Grid */}
-      <div className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-orange-300 w-full max-w-3xl mb-6">
-        <h3 className="text-2xl font-extrabold mb-4 text-center text-orange-700">
-          Sacred Number Realm
-        </h3>
+   <div
+  className="relative z-10 rounded-3xl p-6 shadow-2xl border-2 border-orange-300 w-full max-w-3xl mb-6 bg-cover bg-center"
+  style={{
+    backgroundImage: `url(${import.meta.env.BASE_URL}dove.jpg)`
+  }}
+>
+  <h3 className="text-2xl font-extrabold mb-4 text-center text-orange-700 drop-shadow-lg">
+    Sacred Number Realm
+  </h3>
 
-        <div className="grid grid-cols-8 gap-3">
-          {numberGrid.map((number) => (
-            <button
-              key={number}
-              onClick={() => handleNumberClick(number)}
-              disabled={selectedNumbers.length >= 4 && !selectedNumbers.includes(number)}
-              className={`aspect-square flex items-center justify-center text-lg font-extrabold rounded-xl transition-transform duration-300 hover:scale-105 border-2 ${
-                selectedNumbers.includes(number)
-                  ? "bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 text-white shadow-xl"
-                  : "bg-gradient-to-br from-gray-100 to-gray-200 text-black hover:from-orange-300 hover:to-yellow-300"
-              }`}
-            >
-              {number}
-            </button>
-          ))}
-        </div>
+  <div className="grid grid-cols-8 gap-3">
+    {numberGrid.map((number) => (
+<button
+  key={number}
+  onClick={() => handleNumberClick(number)}
+  disabled={selectedNumbers.length >= 4 && !selectedNumbers.includes(number)}
+  className={`aspect-square flex items-center justify-center text-lg font-extrabold rounded-xl transition-transform duration-300 hover:scale-105 border-2 backdrop-blur-md
+    ${
+      selectedNumbers.includes(number)
+        ? "bg-gradient-to-br from-yellow-400/70 via-orange-500/70 to-red-500/70 text-white shadow-2xl ring-4 ring-yellow-300/70"
+        : "bg-white/30 border-white/40 text-black hover:bg-white/50"
+    }`}
+>
+  {number}
+</button>
 
-        <p className="mt-3 text-center font-bold text-gray-700">
-          Selected: {selectedNumbers.join(", ") || "None"} ({selectedNumbers.length}/4)
-        </p>
-      </div>
+    ))}
+  </div>
+
+  <p className="mt-3 text-center font-bold text-gray-800">
+    Selected: {selectedNumbers.join(", ") || "None"} (
+    {selectedNumbers.length}/4)
+  </p>
+</div>
+
+
 
       {/* User Details Form */}
       <form
