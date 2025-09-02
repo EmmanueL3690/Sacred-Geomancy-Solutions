@@ -127,6 +127,17 @@ export default function UserPage() {
         </ol>
       </div>
 
+      {/* Procedure Image Section */}
+<div className="w-full max-w-3xl mb-6 text-center">
+  <h2 className="text-2xl font-extrabold text-orange-700 mb-2">Procedure</h2>
+  <h3 className="text-lg font-semibold text-gray-700 mb-4">How to do it</h3>
+  <img
+    src={`${import.meta.env.BASE_URL}realm.jpg`}
+    alt="Procedure Illustration"
+    className="rounded-2xl shadow-2xl mx-auto"
+  />
+</div>
+
       {/* Number Grid */}
    <div
   className="relative z-10 rounded-3xl p-6 shadow-2xl border-2 border-orange-300 w-full max-w-3xl mb-6 bg-cover bg-center"
