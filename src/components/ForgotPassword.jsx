@@ -21,11 +21,12 @@ function ForgotPassword() {
     setLoading(true);
 
     try {
-        const res = await fetch("https://auth-backend-blush.vercel.app/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+   const res = await fetch(`${API_BASE_URL}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
 
       const data = await res.json();
 

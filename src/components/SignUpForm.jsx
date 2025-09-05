@@ -44,12 +44,11 @@ function SignUpForm() {
     setLoading(true);
 
     try {
-      // ✅ Updated URL to match backend route
-    const res = await fetch("https://auth-backend-blush.vercel.app/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+       const res = await fetch(`${API_BASE_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: fullname, email, password }),
+      });
 
 
       const data = await res.json();

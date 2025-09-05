@@ -58,11 +58,12 @@ function LoginForm({ onLogin }) {
       }
 
       // 🌐 Normal backend login
-      const res = await fetch("https://auth-backend-blush.vercel.app/login", {
+      const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
 
 
       const data = await res.json();
