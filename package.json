@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://emmanuel3690.github.io/Sacred-Geomancy-Solutions",
+"homepage": ".",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
