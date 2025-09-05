@@ -1,9 +1,8 @@
-// SignUpForm.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API_BASE_URL from "../config";
 
-function SignUpForm() {
+function SignUpForm({ onLogin }) {
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +48,6 @@ function SignUpForm() {
       const res = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // 🔥 FIXED: use fullname instead of name
         body: JSON.stringify({ fullname, email, password }),
       });
 
@@ -61,13 +59,16 @@ function SignUpForm() {
         return;
       }
 
-      // Save user and token
+      // Save user & token
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
 
+      // Call onLogin callback if exists
+      if (onLogin) onLogin(data.user);
+
       navigate("/"); // redirect to main site
     } catch (err) {
-      console.error(err);
+      console.error("SignUp error:", err);
       setErrorMsg("Network error. Make sure the backend is running.");
     } finally {
       setLoading(false);

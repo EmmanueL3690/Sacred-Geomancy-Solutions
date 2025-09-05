@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import bcrypt from "bcryptjs"; // Make sure to install bcryptjs
+import bcrypt from "bcryptjs";
 import API_BASE_URL from "../config";
 
 // ✅ Hardcoded admin info
 const ADMIN_EMAIL = "geomancysolutions@gmail.com";
-const ADMIN_HASH = "$2a$10$JQWKGJmWuAr5NTtd1lz8ueqkvLXUvs3d6.3HnPkxJPz9fCrrTQ6mi"; // bcrypt hash for 'admin123'
+const ADMIN_HASH = "$2b$10$JQWKGJmWuAr5NTtd1lz8ueqkvLXUvs3d6.3HnPkxJPz9fCrrTQ6mi"; // hash for 'admin123'
 
 function LoginForm({ onLogin }) {
   const [fullname, setFullname] = useState("");
@@ -18,6 +18,7 @@ function LoginForm({ onLogin }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Pre-fill user from storage if exists
     const savedUser =
       JSON.parse(localStorage.getItem("user")) ||
       JSON.parse(sessionStorage.getItem("user"));
@@ -39,7 +40,7 @@ function LoginForm({ onLogin }) {
     setLoading(true);
 
     try {
-      // ✅ Admin login check
+      // ✅ Admin login check (local)
       if (email === ADMIN_EMAIL) {
         const isValid = await bcrypt.compare(password, ADMIN_HASH);
         if (isValid) {
@@ -48,7 +49,7 @@ function LoginForm({ onLogin }) {
           else sessionStorage.setItem("user", JSON.stringify(adminUser));
 
           onLogin(adminUser);
-          navigate("/"); // <-- admin goes to MainSite
+          navigate("/"); // Admin dashboard or main page
           return;
         } else {
           setErrorMsg("Invalid admin password.");
@@ -57,23 +58,22 @@ function LoginForm({ onLogin }) {
         }
       }
 
-      // 🌐 Normal backend login
+      // 🌐 Backend login
       const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
       });
-
-
 
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMsg(data.error || "Login failed");
+        setErrorMsg(data.error || "Login failed. Check backend.");
         setLoading(false);
         return;
       }
 
+      // Save user & token
       const user = { ...data.user, fullname: data.user.fullname || fullname };
       if (rememberMe) {
         localStorage.setItem("user", JSON.stringify(user));
@@ -84,7 +84,7 @@ function LoginForm({ onLogin }) {
       }
 
       onLogin(user);
-      navigate("/"); // <-- all users go to MainSite
+      navigate("/"); // Redirect after login
     } catch (err) {
       console.error("Login error:", err);
       setErrorMsg("Network error. Make sure the backend is running.");

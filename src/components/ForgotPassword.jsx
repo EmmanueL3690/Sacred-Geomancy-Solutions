@@ -1,4 +1,3 @@
-// ForgotPassword.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import API_BASE_URL from "../config";
@@ -31,13 +30,12 @@ function ForgotPassword() {
       const data = await res.json();
 
       if (!res.ok) {
-        // 🔥 Show backend error if available
         setErrorMsg(data.error || "Something went wrong.");
       } else {
         setMessage(data.message || "Password reset instructions sent.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Forgot password error:", err);
       setErrorMsg("Network error. Make sure the backend is running.");
     } finally {
       setLoading(false);
@@ -76,7 +74,6 @@ function ForgotPassword() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        {/* 🔥 Show errors and success messages clearly */}
         {errorMsg && (
           <p className="text-red-400 font-semibold text-sm text-center">
             {errorMsg}
