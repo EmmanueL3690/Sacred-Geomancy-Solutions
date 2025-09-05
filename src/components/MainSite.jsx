@@ -150,9 +150,10 @@ function MainSite({ user, onLogout }) {
             problems and reveal lasting solutions.
           </p>
           <div className="bg-white/10 rounded-2xl p-6 border border-white/20 text-center">
-            <p className="text-2xl font-bold text-white">
-              Welcome {user.name}! Your spiritual guidance awaits in 4 sacred numbers
-            </p>
+           <p className="text-2xl font-bold text-white">
+            Welcome {user.fullname}! Your spiritual guidance awaits in 4 sacred numbers
+          </p>
+
           </div>
         </div>
 

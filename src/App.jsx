@@ -1,26 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
+import SignUpForm from "./components/SignUpForm";
+import ForgotPassword from "./components/ForgotPassword";
 import MainSite from "./components/MainSite";
 import AdminProfile from "./components/AdminProfile";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   const [user, setUser] = useState(null);
 
-  const handleLogin = ({ email, fullname, password }) => {
-    // You can replace this with real auth later
-    if (email === "geomancysolutions@gmail.com" && password === "admin123") {
-      setUser({ email, role: "admin", name: fullname });
-    } else {
-      setUser({ email, role: "user", name: fullname });
-    }
+  useEffect(() => {
+    // Load user from storage
+    const savedUser =
+      JSON.parse(localStorage.getItem("user")) ||
+      JSON.parse(sessionStorage.getItem("user"));
+    if (savedUser) setUser(savedUser);
+  }, []);
+
+  // Handle login
+  const handleLogin = (userData) => {
+    setUser(userData);
   };
 
-  const handleLogout = () => setUser(null);
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
+    setUser(null);
+  };
 
   return (
     <Routes>
-      {/* Home / Main site */}
+      {/* Home/Main Site accessible to logged-in users */}
       <Route
         path="/"
         element={
@@ -32,10 +44,19 @@ function App() {
         }
       />
 
-      {/* Login Page */}
+      {/* Login page */}
       <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
 
-      {/* Admin Profile (only admin) */}
+      {/* Sign Up page */}
+      <Route path="/signup" element={<SignUpForm />} />
+
+      {/* Forgot Password page */}
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+
+      {/* Admin Panel accessible only to admin */}
       <Route
         path="/admin"
         element={
@@ -51,11 +72,10 @@ function App() {
         }
       />
 
-      {/* Catch-all → redirect home */}
-      <Route path="*" element={<Navigate to="/" />} />
+      {/* Catch-all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
 export default App;
-
