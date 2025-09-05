@@ -1,3 +1,4 @@
+// SignUpForm.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API_BASE_URL from "../config";
@@ -28,7 +29,8 @@ function SignUpForm() {
       return;
     }
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
     if (!passwordRegex.test(password)) {
       setErrorMsg(
         "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
@@ -44,12 +46,12 @@ function SignUpForm() {
     setLoading(true);
 
     try {
-       const res = await fetch(`${API_BASE_URL}/signup`, {
+      const res = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: fullname, email, password }),
+        // 🔥 FIXED: use fullname instead of name
+        body: JSON.stringify({ fullname, email, password }),
       });
-
 
       const data = await res.json();
 
@@ -153,7 +155,9 @@ function SignUpForm() {
           </span>
         </label>
 
-        {errorMsg && <p className="text-red-400 font-semibold text-sm">{errorMsg}</p>}
+        {errorMsg && (
+          <p className="text-red-400 font-semibold text-sm">{errorMsg}</p>
+        )}
 
         <button
           type="submit"

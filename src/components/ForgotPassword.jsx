@@ -1,3 +1,4 @@
+// ForgotPassword.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import API_BASE_URL from "../config";
@@ -21,16 +22,16 @@ function ForgotPassword() {
     setLoading(true);
 
     try {
-   const res = await fetch(`${API_BASE_URL}/forgot-password`, {
+      const res = await fetch(`${API_BASE_URL}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
-
       const data = await res.json();
 
       if (!res.ok) {
+        // 🔥 Show backend error if available
         setErrorMsg(data.error || "Something went wrong.");
       } else {
         setMessage(data.message || "Password reset instructions sent.");
@@ -75,8 +76,17 @@ function ForgotPassword() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        {errorMsg && <p className="text-red-400 font-semibold text-sm">{errorMsg}</p>}
-        {message && <p className="text-green-400 font-semibold text-sm">{message}</p>}
+        {/* 🔥 Show errors and success messages clearly */}
+        {errorMsg && (
+          <p className="text-red-400 font-semibold text-sm text-center">
+            {errorMsg}
+          </p>
+        )}
+        {message && (
+          <p className="text-green-400 font-semibold text-sm text-center">
+            {message}
+          </p>
+        )}
 
         <button
           type="submit"
