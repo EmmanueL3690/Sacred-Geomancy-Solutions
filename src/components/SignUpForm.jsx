@@ -17,7 +17,6 @@ function SignUpForm({ onLogin }) {
     e.preventDefault();
     setErrorMsg("");
 
-    // Basic validations
     if (!fullname || !email || !password || !confirmPassword) {
       setErrorMsg("Please fill in all fields.");
       return;
@@ -60,13 +59,15 @@ function SignUpForm({ onLogin }) {
       }
 
       // Save user & token
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const user = { ...data.user, fullname: data.user.fullname || fullname };
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", data.token);
 
-      // Call onLogin callback if exists
-      if (onLogin) onLogin(data.user);
+      if (onLogin) onLogin(user);
 
-      navigate("/"); // redirect to main site
+      // Role-based redirection
+      if (user.role === "admin") navigate("/admin");
+      else navigate("/"); // regular user
     } catch (err) {
       console.error("SignUp error:", err);
       setErrorMsg("Network error. Make sure the backend is running.");
