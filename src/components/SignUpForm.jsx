@@ -42,7 +42,7 @@ export default function SignupForm({ onLogin }) {
       const userId = sessionData?.session?.user?.id;
       if (!userId) throw new Error("User session not found after signup.");
 
-      // 3️⃣ Insert into profiles
+      // 3️⃣ Insert into profiles (RLS-safe)
       const { error: profileError } = await supabase.from("profiles").insert([
         { user_id: userId, fullname, role: "user" },
       ]);
@@ -63,7 +63,7 @@ export default function SignupForm({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-black to-blue-700 relative overflow-hidden p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-black to-blue-700 relative overflow-hidden">
       <div className="absolute inset-0 opacity-30">
         <video autoPlay loop muted className="w-full h-full object-cover">
           <source src="/videos/spiritual-realm.mp4" type="video/mp4" />
@@ -72,9 +72,9 @@ export default function SignupForm({ onLogin }) {
 
       <form
         onSubmit={handleSignup}
-        className="relative z-20 bg-white/10 backdrop-blur-xl border border-white/20 p-4 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-4 sm:space-y-6"
+        className="relative z-20 bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl max-w-md w-full space-y-6"
       >
-        <h1 className="text-2xl sm:text-3xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-500">
+        <h1 className="text-3xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-500">
           Create Your Account
         </h1>
 
@@ -83,7 +83,7 @@ export default function SignupForm({ onLogin }) {
           placeholder="Full Name"
           value={fullname}
           onChange={(e) => setFullname(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 text-sm sm:text-base"
+          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
         />
 
         <input
@@ -91,7 +91,7 @@ export default function SignupForm({ onLogin }) {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 text-sm sm:text-base"
+          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
         />
 
         <div className="relative">
@@ -100,7 +100,7 @@ export default function SignupForm({ onLogin }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 text-sm sm:text-base"
+            className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
           />
           <button
             type="button"
@@ -111,7 +111,7 @@ export default function SignupForm({ onLogin }) {
           </button>
         </div>
 
-        <label className="flex items-center text-white text-sm sm:text-base">
+        <label className="flex items-center text-white text-sm">
           <input
             type="checkbox"
             checked={agreeTerms}
@@ -126,12 +126,12 @@ export default function SignupForm({ onLogin }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 bg-gradient-to-r from-green-400 to-blue-500 hover:from-blue-500 hover:to-green-400 text-white font-bold rounded-lg disabled:opacity-50 transition-all text-sm sm:text-base"
+          className="w-full py-3 bg-gradient-to-r from-green-400 to-blue-500 hover:from-blue-500 hover:to-green-400 text-white font-bold rounded-lg disabled:opacity-50 transition-all"
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
 
-        <div className="flex justify-center text-sm sm:text-base text-gray-200 mt-2">
+        <div className="flex justify-between text-sm text-gray-200">
           <button
             type="button"
             onClick={() => navigate("/login")}

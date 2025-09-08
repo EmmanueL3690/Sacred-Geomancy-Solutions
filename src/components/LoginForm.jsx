@@ -251,8 +251,11 @@ export default function LoginForm({ onLogin }) {
         className="relative z-20 bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"
       >
         <h1 className="text-2xl sm:text-3xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-500">
-          Login
+          Numbers to Solutions
         </h1>
+        <p className="text-center text-white text-">
+          Enter your details to unlock your spiritual <br /> guidance
+        </p>
 
         <input
           type="text"
