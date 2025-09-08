@@ -48,7 +48,9 @@ function App() {
       <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
 
       {/* Sign Up page */}
-      <Route path="/signup" element={<SignUpForm />} />
+      <Route path="/signup" element={<SignUpForm onLogin={handleLogin} />} />
+
+
 
       {/* Forgot Password page */}
       <Route path="/forgot-password" element={<ForgotPassword />} />

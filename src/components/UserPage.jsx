@@ -130,6 +130,7 @@ export default function UserPage() {
     <ol className="list-decimal list-inside space-y-3 font-bold text-lg leading-relaxed">
       <li>Look at the number chart below.</li>
       <li>Pick 4 numbers — one at a time.</li>
+      <li>Numbers are universal codes — they don’t just come from you, but from the flow of spiritual energy.</li>
       <li>
         People choosing numbers are not just picking at random — they are
         entering a "realm" where numbers reveal their problems and solutions.

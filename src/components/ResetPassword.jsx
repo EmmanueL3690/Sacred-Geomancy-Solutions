@@ -1,114 +1,99 @@
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import API_BASE_URL from "../config";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
-function ResetPassword() {
-  const { token } = useParams();
+export default function ResetPassword({ onShowLogin }) {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+  const token = searchParams.get("access_token"); // Supabase passes this in the reset link
 
-  const handleSubmit = async (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
-    setMessage("");
     setErrorMsg("");
+    setSuccessMsg("");
 
-    if (!newPassword || !confirmPassword) {
-      setErrorMsg("Please fill in both password fields.");
+    if (!password || !confirmPassword) {
+      setErrorMsg("Please fill in both fields.");
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       setErrorMsg("Passwords do not match.");
       return;
     }
 
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/reset-password/${token}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newPassword }),
-      });
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMsg(
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
+      );
+      return;
+    }
 
-      const data = await res.json();
-      if (!res.ok) {
-        // 🔥 Show backend error (e.g., "Invalid or expired token.")
-        setErrorMsg(data.error || "Failed to reset password.");
-      } else {
-        setMessage("✅ Password reset successful! Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2500);
-      }
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        access_token: token,
+        password,
+      });
+      if (error) throw error;
+
+      setSuccessMsg("Password updated successfully! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
-      console.error("Reset password error:", err);
-      setErrorMsg("Network error. Please try again.");
+      setErrorMsg(err.message || "Failed to reset password.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+    <form
+      onSubmit={handleReset}
+      className="max-w-md mx-auto mt-20 p-6 bg-white/10 backdrop-blur-xl rounded-xl space-y-4"
+    >
+      <h1 className="text-2xl font-bold text-center text-white">Reset Password</h1>
+
+      <input
+        type="password"
+        placeholder="New Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full p-2 rounded bg-white/20 text-white"
+      />
+
+      <input
+        type="password"
+        placeholder="Confirm New Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        className="w-full p-2 rounded bg-white/20 text-white"
+      />
+
+      {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
+      {successMsg && <p className="text-green-400 text-sm">{successMsg}</p>}
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-orange-500 hover:bg-red-500 py-2 rounded text-white font-bold"
       >
-        <source src="/videos/spiritual-realm.mp4" type="video/mp4" />
-      </video>
-      <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-purple-900/60 to-black/80"></div>
+        {loading ? "Updating..." : "Reset Password"}
+      </button>
 
-      <form
-        onSubmit={handleSubmit}
-        className="relative bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl max-w-md w-full space-y-6 z-30"
-      >
-        <h1 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 text-center">
-          Reset Password
-        </h1>
-
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full border border-white/30 bg-white/20 text-white placeholder-gray-300 p-3 rounded-lg"
-        />
-
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full border border-white/30 bg-white/20 text-white placeholder-gray-300 p-3 rounded-lg"
-        />
-
-        {/* 🔥 Show backend messages */}
-        {errorMsg && (
-          <p className="text-red-400 font-semibold text-sm text-center">
-            {errorMsg}
-          </p>
-        )}
-        {message && (
-          <p className="text-green-400 font-semibold text-sm text-center">
-            {message}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-gradient-to-r from-orange-400 to-red-500 hover:from-red-500 hover:to-orange-400 text-white font-bold rounded-lg disabled:opacity-50"
-        >
-          {loading ? "Resetting..." : "Reset Password"}
+      <p className="text-center text-sm text-gray-200 mt-2">
+        Remembered your password?{" "}
+        <button onClick={onShowLogin} className="text-orange-400 hover:underline">
+          Login
         </button>
-      </form>
-    </div>
+      </p>
+    </form>
   );
 }
-
-export default ResetPassword;
