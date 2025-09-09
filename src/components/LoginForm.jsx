@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
@@ -58,7 +57,16 @@ export default function LoginForm({ onLogin }) {
       onLogin(finalUser);
       navigate("/dashboard");
     } catch (err) {
-      setErrorMsg(err.message || "Login failed.");
+      // 🔒 Enhanced Security Messages
+      if (err.code === "auth/user-not-found") {
+        setErrorMsg("No account found with this email. Please sign up first.");
+      } else if (err.code === "auth/wrong-password") {
+        setErrorMsg("Incorrect password. Try again.");
+      } else if (err.code === "auth/invalid-email") {
+        setErrorMsg("Invalid email format.");
+      } else {
+        setErrorMsg("No account found with this email. Please sign up first.");
+      }
     } finally {
       setLoading(false);
     }
@@ -66,12 +74,7 @@ export default function LoginForm({ onLogin }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-black to-blue-700 p-4">
-
-       <div className="absolute inset-0 opacity-30">         <video autoPlay loop muted className="w-full h-full object-cover">
-           <source src="/videos/spiritual-realm.mp4" type="video/mp4" />
-        </video>
-       </div>
-
+      
       <form
         onSubmit={handleSubmit}
         className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"
@@ -97,6 +100,7 @@ export default function LoginForm({ onLogin }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
+          required
         />
 
         <div className="relative">
@@ -106,6 +110,7 @@ export default function LoginForm({ onLogin }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
+            required
           />
           <button
             type="button"
@@ -116,7 +121,20 @@ export default function LoginForm({ onLogin }) {
           </button>
         </div>
 
-        {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
+        {errorMsg && (
+          <div className="text-center">
+            <p className="text-red-400 text-sm mb-2">{errorMsg}</p>
+            {errorMsg.includes("sign up") && (
+              <button
+                type="button"
+                onClick={() => navigate("/signup")}
+                className="text-blue-400 underline"
+              >
+                Go to Sign Up
+              </button>
+            )}
+          </div>
+        )}
 
         <button
           type="submit"
