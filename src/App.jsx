@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+ import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import SignUpForm from "./components/SignUpForm";
@@ -6,12 +6,13 @@ import ForgotPassword from "./components/ForgotPassword";
 import MainSite from "./components/MainSite";
 import AdminProfile from "./components/AdminProfile";
 import ResetPassword from "./components/ResetPassword";
+import LandingPage from "./components/landingpage";
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Load user from storage
+    // Load user from storage 
     const savedUser =
       JSON.parse(localStorage.getItem("user")) ||
       JSON.parse(sessionStorage.getItem("user"));
@@ -21,6 +22,8 @@ function App() {
   // Handle login
   const handleLogin = (userData) => {
     setUser(userData);
+    // store in session or local
+    sessionStorage.setItem("user", JSON.stringify(userData));
   };
 
   // Handle logout
@@ -32,9 +35,12 @@ function App() {
 
   return (
     <Routes>
-      {/* Home/Main Site accessible to logged-in users */}
+      {/* Landing Page */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Main Site (only for logged-in users) */}
       <Route
-        path="/"
+        path="/main"
         element={
           user ? (
             <MainSite user={user} onLogout={handleLogout} />
@@ -54,7 +60,6 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       <Route path="/reset-password/:token" element={<ResetPassword />} />
-
 
       {/* Admin Panel accessible only to admin */}
       <Route

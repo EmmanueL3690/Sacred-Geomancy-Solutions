@@ -40,7 +40,8 @@ export default function SignupForm() {
       };
       localStorage.setItem("user", JSON.stringify(newUser));
 
-      navigate("/dashboard");
+      // ✅ Direct to MAIN site (not dashboard anymore)
+      navigate("/main");
     } catch (err) {
       // 🔒 Enhanced error messages
       if (err.code === "auth/email-already-in-use") {
@@ -59,7 +60,6 @@ export default function SignupForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-black to-green-700 p-4">
-      
       <form
         onSubmit={handleSignup}
         className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"

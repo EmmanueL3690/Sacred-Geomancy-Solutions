@@ -31,7 +31,7 @@ export default function LoginForm({ onLogin }) {
         };
         localStorage.setItem("user", JSON.stringify(adminUser));
         onLogin(adminUser);
-        navigate("/dashboard");
+        navigate("/main"); // always send to main
         return;
       }
 
@@ -55,7 +55,7 @@ export default function LoginForm({ onLogin }) {
 
       localStorage.setItem("user", JSON.stringify(finalUser));
       onLogin(finalUser);
-      navigate("/dashboard");
+      navigate("/main"); // always send to main
     } catch (err) {
       // 🔒 Enhanced Security Messages
       if (err.code === "auth/user-not-found") {
@@ -74,7 +74,6 @@ export default function LoginForm({ onLogin }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-black to-blue-700 p-4">
-      
       <form
         onSubmit={handleSubmit}
         className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"

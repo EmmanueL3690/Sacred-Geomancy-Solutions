@@ -1,3 +1,9 @@
+/* index.css additions (place near top, after @tailwind directives) */
+
+/* Fonts (Google Fonts import) */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Space+Grotesk:wght@300;400;600&family=Inter:wght@300;400;600&display=swap");
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -124,3 +130,75 @@ body {
 .grid-cols-17 {
   grid-template-columns: repeat(17, minmax(0, 1fr));
 }
+
+
+/* Tailwind base included elsewhere: @tailwind base; @tailwind components; @tailwind utilities; */
+
+/* Font helpers */
+.font-heading { font-family: "Cinzel Decorative", serif; letter-spacing: 0.02em; text-transform: none; }
+.font-body { font-family: "Space Grotesk", "Inter", system-ui, -apple-system, sans-serif; }
+
+/* animations */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 40s linear infinite; }
+
+@keyframes pulse-slow {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.04); opacity: 0.95; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+
+/* portal orb glow helpers */
+.landing-portal .portal-orb {
+  box-shadow:
+    0 10px 40px rgba(0, 224, 255, 0.06),
+    0 30px 80px rgba(123, 0, 255, 0.06),
+    inset 0 6px 20px rgba(255,255,255,0.02);
+}
+
+/* hide default cursor inside portal to show custom cursor orb (optional) */
+.landing-portal { cursor: none; } /* remove only if you want default cursor back */
+
+/* subtle noise overlay (optional) */
+.landing-portal::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 4px 4px;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  z-index: -1;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 300% 300%;
+  animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-30px) translateX(15px); }
+}
+.animate-float { animation: float 12s ease-in-out infinite; }
+.animate-float-delayed { animation: float 16s ease-in-out infinite 4s; }
+.animate-float-slow { animation: float 20s ease-in-out infinite 2s; }

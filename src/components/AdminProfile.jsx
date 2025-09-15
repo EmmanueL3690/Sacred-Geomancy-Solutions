@@ -11,7 +11,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { Card } from "./ui/Card.jsx";
-import { solutionsData } from "./solutionsData.js";
+import { readings } from "../readings.js"; // ⬅ added
 
 // Sacred Numbers Setup (1–16 × A–P)
 const letters = "ABCDEFGHIJKLMNOP".split("");
@@ -21,6 +21,9 @@ export default function AdminProfile() {
   const [users, setUsers] = useState([]);
   const [testimonies, setTestimonies] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
+
+  // accordion state
+  const [openId, setOpenId] = useState(null);
 
   // Fetch User Details
   useEffect(() => {
@@ -52,7 +55,14 @@ export default function AdminProfile() {
 
   const renderStars = (rating) =>
     Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={`text-lg ${i < rating ? "text-yellow-400" : "text-gray-300"}`}>⭐</span>
+      <span
+        key={i}
+        className={`text-lg ${
+          i < rating ? "text-yellow-400" : "text-gray-300"
+        }`}
+      >
+        ⭐
+      </span>
     ));
 
   return (
@@ -70,8 +80,13 @@ export default function AdminProfile() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {users.map((user) => (
-              <Card key={user.id} className="p-4 relative bg-gradient-to-br from-yellow-50 to-orange-100 shadow-lg rounded-xl border-2 border-orange-200">
-                <p className="font-bold text-lg">{user.name} ({user.age})</p>
+              <Card
+                key={user.id}
+                className="p-4 relative bg-gradient-to-br from-yellow-50 to-orange-100 shadow-lg rounded-xl border-2 border-orange-200"
+              >
+                <p className="font-bold text-lg">
+                  {user.name} ({user.age})
+                </p>
                 <p className="text-sm text-gray-700">{user.location}</p>
                 <p className="text-sm text-gray-700">{user.email}</p>
                 <p className="text-sm text-gray-700">{user.phone}</p>
@@ -98,7 +113,10 @@ export default function AdminProfile() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {testimonies.map((t) => (
-              <Card key={t.id} className="p-4 relative bg-gradient-to-br from-green-50 to-emerald-100 shadow-lg rounded-xl border-2 border-emerald-200">
+              <Card
+                key={t.id}
+                className="p-4 relative bg-gradient-to-br from-green-50 to-emerald-100 shadow-lg rounded-xl border-2 border-emerald-200"
+              >
                 <div className="mb-2">{renderStars(t.rating)}</div>
                 <p className="text-gray-800">{t.message}</p>
                 <p className="text-sm text-gray-600 mt-2">— {t.name}</p>
@@ -113,6 +131,40 @@ export default function AdminProfile() {
           </div>
         )}
       </section>
+
+      {/* Accordion Section */}
+<section>
+  <h2 className="text-xl font-black mb-4 text-center"> Sacred Numbers – Meanings</h2>
+  <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    {readings.map((item) => (
+      <div
+        key={item.id}
+        className={`border-l-4 rounded-md overflow-hidden ${item.color}`}
+      >
+        <button
+          onClick={() => setOpenId(openId === item.id ? null : item.id)}
+          className="w-full flex justify-between items-center px-4 py-3 font-semibold text-left"
+        >
+          <span>
+            {item.id}. {item.title}
+          </span>
+          <span className="text-xl">
+            {openId === item.id ? "×" : "+"}
+          </span>
+        </button>
+
+        {openId === item.id && (
+          <div className="px-4 pb-4 text-sm text-gray-700 space-y-1">
+            {item.content.map((line, i) => (
+              <div key={i}>{line}</div>
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
+
     </div>
   );
 }
