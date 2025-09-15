@@ -192,8 +192,11 @@ export default function LandingPage() {
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 leading-relaxed">
               Discover how Geomancy can guide your life <br />
-              Unlock hidden truths, make better choices, and stay connected to the spiritual flow around you. Geomancy helps you find balance, avoid unseen problems, confidence, and peace to your journey
+              Unlock hidden truths, make better choices, and stay connected to the 
+              positive spiritual flow surrounding you. Geomancy helps you find balance, 
+              avoid unseen problems, gain confidence, and bring peace to your journey.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <button 
               onClick={() => navigate("/login")}
@@ -252,11 +255,13 @@ export default function LandingPage() {
 
   {/* Closing Statement */}
   <div className="text-center max-w-3xl mx-auto mt-8">
-    <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed">
-      🌍 Geomancy is your guide to <span className="text-[#00F0FF] font-semibold">clarity</span>, 
-      <span className="text-[#C850C0] font-semibold"> peace</span>, and 
-      <span className="text-[#FFD700] font-semibold"> progress</span>.
-    </p>
+<p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed">
+  🌍 Geomancy is your guide to <span className="text-[#00F0FF] font-semibold">clarity</span>, 
+  <span className="text-[#C850C0] font-semibold"> peace</span>, and 
+  <span className="text-[#FFD700] font-semibold"> progress</span>, all while keeping you aligned 
+  with the <span className="text-[#00F0FF] font-semibold">positive spiritual flow</span> surrounding you.
+</p>
+
   </div>
 </section>
 
