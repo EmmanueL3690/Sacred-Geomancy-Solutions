@@ -11,19 +11,12 @@ import {
   doc,
 } from "firebase/firestore";
 import { Card } from "./ui/Card.jsx";
-import { readings } from "../readings.js"; // ⬅ added
-
-// Sacred Numbers Setup (1–16 × A–P)
-const letters = "ABCDEFGHIJKLMNOP".split("");
-const numbers = Array.from({ length: 16 }, (_, i) => i + 1);
 
 export default function AdminProfile() {
   const [users, setUsers] = useState([]);
   const [testimonies, setTestimonies] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
 
-  // accordion state
-  const [openId, setOpenId] = useState(null);
 
   // Fetch User Details
   useEffect(() => {
@@ -131,40 +124,7 @@ export default function AdminProfile() {
           </div>
         )}
       </section>
-
-      {/* Accordion Section */}
-<section>
-  <h2 className="text-xl font-black mb-4 text-center"> Sacred Numbers – Meanings</h2>
-  <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-    {readings.map((item) => (
-      <div
-        key={item.id}
-        className={`border-l-4 rounded-md overflow-hidden ${item.color}`}
-      >
-        <button
-          onClick={() => setOpenId(openId === item.id ? null : item.id)}
-          className="w-full flex justify-between items-center px-4 py-3 font-semibold text-left"
-        >
-          <span>
-            {item.id}. {item.title}
-          </span>
-          <span className="text-xl">
-            {openId === item.id ? "×" : "+"}
-          </span>
-        </button>
-
-        {openId === item.id && (
-          <div className="px-4 pb-4 text-sm text-gray-700 space-y-1">
-            {item.content.map((line, i) => (
-              <div key={i}>{line}</div>
-            ))}
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-</section>
-
+        
     </div>
   );
 }
