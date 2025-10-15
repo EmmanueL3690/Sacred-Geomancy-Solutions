@@ -1,9 +1,8 @@
-
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebase";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { motion } from "framer-motion";
+import { api } from "../api";
+import { Loader2 } from "lucide-react";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -14,62 +13,111 @@ export default function ForgotPassword() {
 
   const handleReset = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
     setMessage("");
+    setErrorMsg("");
     setLoading(true);
 
     try {
-      await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset link sent! Check your email.");
-    } catch (err) {
-      setErrorMsg(err.message || "Failed to send reset email.");
+      const data = await api.forgotPassword(email);
+      if (data.status === "success") {
+        setMessage("✅ Reset link sent! Check your email.");
+      } else {
+        setErrorMsg(data.message || "Failed to send reset email.");
+      }
+    } catch {
+      setErrorMsg("⚠️ Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-black to-blue-700 p-4">
-      <form
-        onSubmit={handleReset}
-        className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6"
-      >
-        <h1 className="text-2xl sm:text-3xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-blue-400 to-purple-500">
-          Forgot Password
-        </h1>
-        <p className="text-center text-white">Enter your email to reset your password</p>
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
+      {/* 🔮 Animated Gradient Background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#0b0c10] via-[#1F4068] to-[#2C003E] animate-gradient">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.05),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(255,255,255,0.08),transparent_50%)]" />
+      </div>
 
-        <input
+      {/* 🌟 Floating Particles (Optional aesthetic enhancement) */}
+      <div className="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] bg-[length:3px_3px] opacity-20" />
+
+      {/* 🪄 Forgot Password Form */}
+      <motion.form
+        onSubmit={handleReset}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-6 text-white z-10"
+      >
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-3xl sm:text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-400 to-purple-500"
+        >
+          Forgot Password
+        </motion.h1>
+
+        <p className="text-center text-sm text-gray-200">
+          Enter your email to receive a reset link
+        </p>
+
+        <motion.input
+          whileFocus={{ scale: 1.02 }}
           type="email"
-          placeholder="Enter your email"
+          placeholder="Enter your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30"
+          className="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 transition-all"
           required
         />
 
-        {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
-        {message && <p className="text-green-400 text-sm">{message}</p>}
+        {errorMsg && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-400 text-sm text-center"
+          >
+            {errorMsg}
+          </motion.p>
+        )}
 
-        <button
+        {message && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-green-400 text-sm text-center"
+          >
+            {message}
+          </motion.p>
+        )}
+
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          whileHover={{ scale: 1.03 }}
           type="submit"
           disabled={loading}
-          className="w-full py-3 bg-gradient-to-r from-blue-400 to-indigo-500 hover:from-indigo-500 hover:to-blue-400 text-white font-bold rounded-lg disabled:opacity-50 transition-all"
+          className="w-full py-3 bg-gradient-to-r from-indigo-400 to-purple-500 hover:from-purple-500 hover:to-indigo-400 text-white font-bold rounded-lg disabled:opacity-50 transition-all shadow-md"
         >
           {loading ? "Sending..." : "Send Reset Link"}
-        </button>
+        </motion.button>
 
-        <p className="text-sm text-center text-gray-300 mt-2">
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-sm text-center text-gray-300"
+        >
           Remembered your password?{" "}
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="text-green-400 hover:underline"
+            className="text-green-300 hover:text-green-400 underline transition"
           >
-            Login
+            Back to Login
           </button>
-        </p>
-      </form>
+        </motion.p>
+      </motion.form>
     </div>
   );
 }

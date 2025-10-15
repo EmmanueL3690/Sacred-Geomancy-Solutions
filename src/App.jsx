@@ -1,4 +1,4 @@
- import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import SignUpForm from "./components/SignUpForm";
@@ -7,26 +7,24 @@ import MainSite from "./components/MainSite";
 import AdminProfile from "./components/AdminProfile";
 import ResetPassword from "./components/ResetPassword";
 import LandingPage from "./components/landingpage";
+import VerifyEmail from "./components/VerifyEmail";
+import AuthLayout from "./components/AuthLayout"; // ✅ Import shared layout
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Load user from storage 
     const savedUser =
       JSON.parse(localStorage.getItem("user")) ||
       JSON.parse(sessionStorage.getItem("user"));
     if (savedUser) setUser(savedUser);
   }, []);
 
-  // Handle login
   const handleLogin = (userData) => {
     setUser(userData);
-    // store in session or local
     sessionStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     sessionStorage.removeItem("user");
@@ -38,7 +36,7 @@ function App() {
       {/* Landing Page */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* Main Site (only for logged-in users) */}
+      {/* 🔒 Main Site (Protected) */}
       <Route
         path="/main"
         element={
@@ -50,18 +48,18 @@ function App() {
         }
       />
 
-      {/* Login page */}
-      <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
+      {/* 🧱 Auth Pages inside shared AuthLayout */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
+        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+      </Route>
 
-      {/* Sign Up page */}
-      <Route path="/signup" element={<SignUpForm />} />
-
-      {/* Forgot Password page */}
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-
+      {/* 🔑 Reset Password */}
       <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-      {/* Admin Panel accessible only to admin */}
+      {/* 👑 Admin Panel (Protected + Role Check) */}
       <Route
         path="/admin"
         element={
@@ -77,7 +75,7 @@ function App() {
         }
       />
 
-      {/* Catch-all */}
+      {/* 🌍 Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
