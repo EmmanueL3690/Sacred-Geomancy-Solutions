@@ -1,15 +1,38 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, User, Mail, Lock, Phone, Users, Globe } from "lucide-react";
+import {
+  Loader2,
+  User,
+  Mail,
+  Lock,
+  Phone,
+  Users,
+  Globe,
+} from "lucide-react";
 import { supabase } from "../../lib/supabaseClient";
+
+// Escape user-provided values before inserting them into HTML emails.
+const escapeHtml = (value = "") =>
+  String(value).replace(/[&<>"']/g, (char) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[char];
+  });
 
 export default function SignupForm() {
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
-  const [preferredLanguage, setPreferredLanguage] = useState("English");
+  const [preferredLanguage, setPreferredLanguage] =
+    useState("English");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,6 +59,7 @@ export default function SignupForm() {
     setLoading(true);
 
     try {
+      // 1. Create the user's Supabase account.
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
@@ -51,6 +75,79 @@ export default function SignupForm() {
 
       if (error) throw error;
 
+      // 2. Send the new registration details to the admin inbox.
+      if (data?.user) {
+        const safeName = escapeHtml(fullname.trim());
+        const safeEmail = escapeHtml(email.trim());
+        const safePhone = escapeHtml(phone.trim());
+        const safeGender = escapeHtml(gender);
+        const safeLanguage = escapeHtml(preferredLanguage);
+        const safeUserId = escapeHtml(data.user.id);
+        const signupDate = escapeHtml(
+          new Date().toLocaleString()
+        );
+
+        const { error: notificationError } =
+          await supabase.functions.invoke("resend-email", {
+            body: {
+              // The Edge Function sends to your fixed admin inbox.
+              // This email identifies the person who registered.
+              email: email.trim(),
+              subject: "New Sacred Geomancy Account Registration",
+              message: `
+                <div style="font-family: Arial, sans-serif; color: #222; line-height: 1.6;">
+                  <h2 style="color: #0891b2;">
+                    New Account Registration
+                  </h2>
+
+                  <p>A new user has registered on Sacred Geomancy Solutions.</p>
+
+                  <table style="border-collapse: collapse; width: 100%;">
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>Full Name</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${safeName}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>Email Address</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${safeEmail}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>Phone Number</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${safePhone}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>Gender</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${safeGender}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>Preferred Language</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${safeLanguage}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>User ID</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${safeUserId}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border: 1px solid #ddd;"><strong>Registration Date</strong></td>
+                      <td style="padding: 8px; border: 1px solid #ddd;">${signupDate}</td>
+                    </tr>
+                  </table>
+
+                  <p>This notification was generated when the account signup was submitted.</p>
+                </div>
+              `,
+            },
+          });
+
+        if (notificationError) {
+          console.error(
+            "Admin signup notification failed:",
+            notificationError
+          );
+        }
+      }
+
+      // 3. Show the appropriate account creation message.
       if (data?.user && data?.session === null) {
         setSuccessMsg(
           "Account created! Please check your email to confirm, then log in."
@@ -61,13 +158,15 @@ export default function SignupForm() {
         );
       }
 
+      // 4. Continue to the login page.
       setTimeout(() => {
         navigate("/login");
       }, 2500);
     } catch (err) {
       console.error("Signup error:", err);
       setErrorMsg(
-        err.message || "Unexpected error occurred. Please try again later."
+        err.message ||
+          "Unexpected error occurred. Please try again later."
       );
     } finally {
       setLoading(false);
@@ -94,7 +193,6 @@ export default function SignupForm() {
         </p>
       </div>
 
-      {/* Full Name */}
       <div className="relative">
         <User
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -111,7 +209,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Email */}
       <div className="relative">
         <Mail
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -128,7 +225,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Phone Number */}
       <div className="relative">
         <Phone
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -145,7 +241,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Gender */}
       <div className="relative">
         <Users
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -168,13 +263,15 @@ export default function SignupForm() {
           <option value="Female" className="bg-slate-900 text-white">
             Female
           </option>
-          <option value="Prefer not to say" className="bg-slate-900 text-white">
+          <option
+            value="Prefer not to say"
+            className="bg-slate-900 text-white"
+          >
             Prefer not to say
           </option>
         </select>
       </div>
 
-      {/* Language Preference */}
       <div className="relative">
         <Globe
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -195,7 +292,6 @@ export default function SignupForm() {
         </select>
       </div>
 
-      {/* Password */}
       <div className="relative">
         <Lock
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -212,7 +308,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Confirm Password */}
       <div className="relative">
         <Lock
           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -229,7 +324,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Error Message */}
       {errorMsg && (
         <motion.p
           initial={{ opacity: 0 }}
@@ -241,7 +335,6 @@ export default function SignupForm() {
         </motion.p>
       )}
 
-      {/* Success Message */}
       {successMsg && (
         <motion.p
           initial={{ opacity: 0 }}
@@ -253,7 +346,6 @@ export default function SignupForm() {
         </motion.p>
       )}
 
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
@@ -269,7 +361,6 @@ export default function SignupForm() {
         )}
       </button>
 
-      {/* Login Link */}
       <div className="flex justify-center text-sm text-gray-300 mt-2">
         <button
           type="button"

@@ -53,14 +53,14 @@ const services = [
       "Full spiritual advisory package with priority access & ongoing support.",
     price: "₦5,000",
   },
-  {
-    icon: Sparkles,
-    title: "Custom Consultation",
-    description:
-      "Describe your situation and receive personalized guidance tailored to your needs.",
-    price: "₦5,000",
-    custom: true,
-  },
+{
+  icon: Sparkles,
+  title: "Custom Consultation",
+  description:
+    "Describe your situation from wherever you are, and we will identify the challenges you are experiencing without seeing you in person through the sacred 4 numbers picked by following the procedure.",
+  price: "₦5,000",
+  custom: true,
+}
 ];
 
 export default function ServicesPage() {

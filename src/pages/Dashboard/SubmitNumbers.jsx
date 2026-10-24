@@ -1,285 +1,3 @@
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { motion } from 'framer-motion';
-// import { Info, Check, Loader2, ScrollText, Send } from 'lucide-react';
-
-// // UI Primitives
-// import { Card } from '../../components/ui/Card';
-// import { Button } from '../../components/ui/Button';
-// import { Badge } from '../../components/ui/Badge';
-
-// // Custom Page Widgets
-// import { SubmissionPreview } from '../../components/widgets/SubmissionPreview';
-// import { SubmissionSuccessModal } from '../../components/widgets/SubmissionSuccessModal';
-// import { RecentSubmissionWidget } from '../../components/widgets/RecentSubmissionWidget';
-
-// // Mock Data
-// import {
-//   initialRecentSubmission,
-//   submissionGuidelines,
-//   submissionNoticeRules,
-// } from '../../data/submitNumbersData';
-
-// const containerVariants = {
-//   hidden: { opacity: 0 },
-//   visible: {
-//     opacity: 1,
-//     transition: { staggerChildren: 0.08 },
-//   },
-// };
-
-// const itemVariants = {
-//   hidden: { opacity: 0, y: 16 },
-//   visible: {
-//     opacity: 1,
-//     y: 0,
-//     transition: { duration: 0.4, ease: 'easeOut' },
-//   },
-// };
-
-// export const SubmitNumbers = () => {
-//   const navigate = useNavigate();
-
-//   // Form State
-//   const [numbers, setNumbers] = useState(['', '', '', '']);
-//   const [errors, setErrors] = useState(['', '', '', '']);
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [recentSubmission, setRecentSubmission] = useState(initialRecentSubmission);
-
-//   // Input Change Handler
-//   const handleInputChange = (index, value) => {
-//     // Sanitize input: digits only
-//     const digitsOnly = value.replace(/\D/g, '').slice(0, 2);
-
-//     const newNumbers = [...numbers];
-//     newNumbers[index] = digitsOnly;
-//     setNumbers(newNumbers);
-
-//     // Clear individual field error
-//     const newErrors = [...errors];
-//     newErrors[index] = '';
-//     setErrors(newErrors);
-
-//     // Auto-focus next field if 2 digits are entered
-//     if (digitsOnly.length === 2 && index < 3) {
-//       const nextInput = document.getElementById(`number-input-${index + 1}`);
-//       if (nextInput) nextInput.focus();
-//     }
-//   };
-
-//   // Form Validation & Submission
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     let hasError = false;
-//     const newErrors = ['', '', '', ''];
-
-//     numbers.forEach((num, idx) => {
-//       if (!num || num.trim() === '') {
-//         newErrors[idx] = 'Required';
-//         hasError = true;
-//       }
-//     });
-
-//     if (hasError) {
-//       setErrors(newErrors);
-//       return;
-//     }
-
-//     setIsSubmitting(true);
-
-//     // Simulated API latency
-//     setTimeout(() => {
-//       const submittedSequence = numbers.map((n) => parseInt(n, 10));
-
-//       setRecentSubmission({
-//         id: `sub-${Math.floor(1000 + Math.random() * 9000)}`,
-//         numbers: submittedSequence,
-//         status: 'Pending Review',
-//         submittedAt: 'August 3, 2026',
-//       });
-
-//       setIsSubmitting(false);
-//       setIsModalOpen(true);
-//     }, 1200);
-//   };
-
-//   const handleResetForm = () => {
-//     setNumbers(['', '', '', '']);
-//     setErrors(['', '', '', '']);
-//     setIsModalOpen(false);
-//   };
-
-//   return (
-//     <motion.div
-//       variants={containerVariants}
-//       initial="hidden"
-//       animate="visible"
-//       className="space-y-6 max-w-6xl mx-auto"
-//     >
-//       {/* Section 1: Page Header */}
-//       <motion.div variants={itemVariants}>
-//         <div className="border-l-4 border-l-gold-500 pl-4 py-1">
-//           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-500 to-gold-600">
-//             Submit Your Numbers
-//           </h1>
-//           <p className="text-sm text-neutral-400 mt-1 max-w-3xl">
-//             Enter the four numbers exactly as received. Your submission will be reviewed and you will receive a notification once guidance is available.
-//           </p>
-//         </div>
-//       </motion.div>
-
-//       {/* Main 2-Column Responsive Layout */}
-//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-//         {/* Left Column: Form & Info (2 Cols wide on Desktop) */}
-//         <div className="lg:col-span-2 space-y-6">
-//           {/* Section 2: Important Information Card */}
-//           <motion.div variants={itemVariants}>
-//             <Card className="border-gold-500/30 bg-gold-500/5">
-//               <div className="flex items-center gap-3 pb-3 border-b border-gold-500/15 mb-3">
-//                 <div className="p-2 rounded-xl bg-gold-500/10 text-gold-400">
-//                   <Info className="w-5 h-5" />
-//                 </div>
-//                 <h3 className="text-sm font-serif font-bold text-gold-300 uppercase tracking-wider">
-//                   Important Information
-//                 </h3>
-//               </div>
-//               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-neutral-300">
-//                 {submissionNoticeRules.map((rule, idx) => (
-//                   <li key={idx} className="flex items-start gap-2">
-//                     <span className="text-gold-400 font-bold">•</span>
-//                     <span>{rule}</span>
-//                   </li>
-//                 ))}
-//               </ul>
-//             </Card>
-//           </motion.div>
-
-//           {/* Section 3 & 4: Submission Form */}
-//           <motion.div variants={itemVariants}>
-//             <Card>
-//               <form onSubmit={handleSubmit} className="space-y-6">
-//                 <div className="flex items-center justify-between pb-3 border-b border-gold-500/10">
-//                   <h3 className="text-base font-serif font-bold text-gold-300">
-//                     Numerical Entry
-//                   </h3>
-//                   <Badge variant="gold" className="text-[10px]">
-//                     4 Digits Required
-//                   </Badge>
-//                 </div>
-
-//                 {/* Four Number Inputs */}
-//                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-//                   {[0, 1, 2, 3].map((idx) => (
-//                     <div key={idx} className="flex flex-col gap-1.5">
-//                       <label
-//                         htmlFor={`number-input-${idx}`}
-//                         className="text-xs font-medium text-neutral-300 text-center"
-//                       >
-//                         Number {idx + 1}
-//                       </label>
-//                       <input
-//                         id={`number-input-${idx}`}
-//                         type="text"
-//                         inputMode="numeric"
-//                         maxLength={2}
-//                         value={numbers[idx]}
-//                         onChange={(e) => handleInputChange(idx, e.target.value)}
-//                         placeholder="00"
-//                         className={`w-full h-16 sm:h-20 text-center font-serif font-bold text-2xl sm:text-3xl rounded-2xl bg-obsidian-950 border text-gold-300 placeholder-neutral-700 focus:outline-none transition-all shadow-inner ${
-//                           errors[idx]
-//                             ? 'border-red-500/60 focus:border-red-500'
-//                             : 'border-gold-500/30 focus:border-gold-500 focus:ring-1 focus:ring-gold-500/40'
-//                         }`}
-//                       />
-//                       {errors[idx] && (
-//                         <span className="text-[10px] text-red-400 text-center font-medium">
-//                           {errors[idx]}
-//                         </span>
-//                       )}
-//                     </div>
-//                   ))}
-//                 </div>
-
-//                 {/* Live Sequence Preview */}
-//                 <SubmissionPreview numbers={numbers} />
-
-//                 {/* Submit Action */}
-//                 <Button
-//                   type="submit"
-//                   variant="primary"
-//                   size="lg"
-//                   disabled={isSubmitting}
-//                   className="w-full justify-center text-base py-4 font-serif font-bold shadow-gold-500/20 shadow-lg cursor-pointer"
-//                 >
-//                   {isSubmitting ? (
-//                     <>
-//                       <Loader2 className="w-5 h-5 animate-spin mr-2" />
-//                       Processing Submission...
-//                     </>
-//                   ) : (
-//                     <>
-//                       <Send className="w-5 h-5 mr-2" />
-//                       Submit Numbers
-//                     </>
-//                   )}
-//                 </Button>
-//               </form>
-//             </Card>
-//           </motion.div>
-//         </div>
-
-//         {/* Right Column: Recent Submission & Guidelines */}
-//         <div className="space-y-6">
-//           {/* Section 6: Recent Submission Card */}
-//           <motion.div variants={itemVariants}>
-//             <RecentSubmissionWidget
-//               numbers={recentSubmission.numbers}
-//               submittedDate={recentSubmission.submittedAt}
-//               status={recentSubmission.status}
-//               onViewHistory={() => navigate('/app/history')}
-//             />
-//           </motion.div>
-
-//           {/* Section 7: Guidelines Card */}
-//           <motion.div variants={itemVariants}>
-//             <Card className="space-y-4">
-//               <div className="flex items-center gap-2 pb-3 border-b border-gold-500/10">
-//                 <ScrollText className="w-4 h-4 text-gold-400" />
-//                 <h3 className="text-sm font-serif font-bold text-gold-300 uppercase tracking-wider">
-//                   Submission Guidelines
-//                 </h3>
-//               </div>
-//               <ul className="space-y-3 text-xs text-neutral-300">
-//                 {submissionGuidelines.map((guideline, idx) => (
-//                   <li key={idx} className="flex items-start gap-2.5">
-//                     <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-//                     <span className="leading-relaxed">{guideline}</span>
-//                   </li>
-//                 ))}
-//               </ul>
-//             </Card>
-//           </motion.div>
-//         </div>
-//       </div>
-
-//       {/* Section 5: Success Confirmation Modal */}
-//       <SubmissionSuccessModal
-//         isOpen={isModalOpen}
-//         onClose={() => setIsModalOpen(false)}
-//         submittedNumbers={recentSubmission.numbers}
-//         onViewHistory={() => {
-//           setIsModalOpen(false);
-//           navigate('/app/history');
-//         }}
-//         onSubmitAnother={handleResetForm}
-//       />
-//     </motion.div>
-//   );
-// };
-
-// export default SubmitNumbers;
-
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -295,11 +13,16 @@ import {
   VolumeX, 
   Eye, 
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Info,
+  FastForward
 } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabaseClient';
+
+// Import video directly from assets directory
+import demoVideo from '../../../src/assets/videos/video1.mp4';
 
 export const SubmitNumbers = () => {
   const [numbers, setNumbers] = useState(['', '', '', '']);
@@ -312,13 +35,16 @@ export const SubmitNumbers = () => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [videoError, setVideoError] = useState(false);
 
   const toggleVideoPlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        videoRef.current.play().catch((err) => {
+          console.error("Playback error:", err);
+        });
       }
       setIsPlaying(!isPlaying);
     }
@@ -328,6 +54,12 @@ export const SubmitNumbers = () => {
     if (videoRef.current) {
       videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
+    }
+  };
+
+  const handleFastForward = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime += 10; // Skip forward 10 seconds
     }
   };
 
@@ -382,7 +114,7 @@ export const SubmitNumbers = () => {
         throw new Error('You must be logged in to submit numbers for divine consultation.');
       }
 
-      // 2. Save submission to Supabase
+      // 2. Save submission to Supabase database
       const { data, error } = await supabase
         .from('submissions')
         .insert({
@@ -400,7 +132,28 @@ export const SubmitNumbers = () => {
         throw error;
       }
 
-      // 3. Show success message
+      // 3. Trigger Resend Email Notification via Supabase Edge Function ('resend-email')
+      const userNumbers = [data.number_1, data.number_2, data.number_3, data.number_4].join(', ');
+
+      const { error: functionError } =
+  await supabase.functions.invoke("resend-email", {
+    body: {
+      email: user.email,
+      subject: "Sacred Geomancy - New Submission",
+      message: `
+        <h2>New Sacred Numbers Submission</h2>
+        <p><strong>User Email:</strong> ${user.email}</p>
+        <p><strong>Numbers:</strong> ${userNumbers}</p>
+        <p><strong>Submission ID:</strong> ${data.id}</p>
+      `,
+    },
+  });
+
+      if (functionError) {
+        console.warn('Failed to send confirmation email:', functionError);
+      }
+
+      // 4. Show success message in UI
       setSubmittedData({
         id: data.id,
         numbers: [
@@ -409,10 +162,10 @@ export const SubmitNumbers = () => {
           data.number_3,
           data.number_4,
         ],
-        status: data.status,
+        status: data.status || 'Pending Review',
       });
 
-      // 4. Clear form
+      // 5. Clear form
       setNumbers(['', '', '', '']);
 
     } catch (error) {
@@ -430,22 +183,22 @@ export const SubmitNumbers = () => {
   const steps = [
     {
       step: '01',
-      title: 'Center Your Mind',
-      description: 'Breathe in and out calmly. Clear your thoughts of daily noise.',
+      title: '4-Round Breath Focus',
+      description: 'Breathe in slowly and exhale deeply. Note what number or thought comes to your mind. Repeat this process 3 more times for a total of 4 rounds to arrive at your 4 numbers.',
       icon: Wind,
       color: 'from-amber-500/20 to-yellow-500/10'
     },
     {
       step: '02',
       title: 'Intuitive Channeling',
-      description: 'Pick 4 numbers, one after another, as they emerge naturally from your subconscious.',
+      description: 'Record each of your 4 numbers into the designated entry slots below as they surfaced during your 4 breathing cycles.',
       icon: Brain,
       color: 'from-gold-500/20 to-amber-600/10'
     },
     {
       step: '03',
       title: 'Submit for Guidance',
-      description: 'Input your 4 sacred numbers below to unlock divine insight and geo-therapy alignment.',
+      description: 'Transmit your 4 channeled numbers to receive divine insight and geo-therapy alignment. You will receive your guidance response within 24 hours.',
       icon: Sparkles,
       color: 'from-emerald-500/20 to-teal-600/10'
     }
@@ -472,7 +225,7 @@ export const SubmitNumbers = () => {
           Sacred Number Submission
         </h1>
         <p className="text-sm text-neutral-400 max-w-lg mx-auto font-light leading-relaxed">
-          Follow the ancient preparation ritual before entering your numbers to receive clarity, guidance, and spiritual alignment.
+          Follow the 4-round breathing technique before entering your numbers to receive clarity, guidance, and spiritual alignment.
         </p>
       </div>
 
@@ -484,59 +237,86 @@ export const SubmitNumbers = () => {
       >
         <Card className="p-1 sm:p-2 border-gold-500/30 bg-obsidian-900/80 backdrop-blur-md overflow-hidden shadow-2xl relative">
           <div className="relative aspect-video rounded-lg overflow-hidden bg-black/60 border border-gold-500/20 group">
-            <video
-              ref={videoRef}
-              src="/videos/video1.mp4"
-              className="w-full h-full object-cover"
-              loop
-              playsInline
-              muted={isMuted}
-              onEnded={() => setIsPlaying(false)}
-            />
+            {!videoError ? (
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                loop
+                playsInline
+                muted={isMuted}
+                onEnded={() => setIsPlaying(false)}
+                onError={() => setVideoError(true)}
+              >
+                <source src={demoVideo} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black/80">
+                <AlertCircle className="w-8 h-8 text-amber-400 mb-2" />
+                <p className="text-xs text-neutral-300">Demonstration video preview currently unavailable.</p>
+                <p className="text-[10px] text-neutral-500 mt-1">Please check asset path src/assets/video1.mp4.</p>
+              </div>
+            )}
             
             {/* Custom Overlay Controls */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-90 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-mono text-gold-300 bg-black/50 px-2 py-1 rounded border border-gold-500/30 backdrop-blur">
-                  Demonstration Video
-                </span>
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  className="p-2 rounded-full bg-black/60 text-gold-300 border border-gold-500/30 hover:bg-gold-500/20 transition-all"
-                  title={isMuted ? "Unmute" : "Mute"}
-                >
-                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
-              </div>
+            {!videoError && (
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-90 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-mono text-gold-300 bg-black/50 px-2 py-1 rounded border border-gold-500/30 backdrop-blur">
+                    Demonstration Video
+                  </span>
+                  
+                  <div className="flex items-center gap-2">
+                    {/* Fast Forward Button */}
+                    <button
+                      type="button"
+                      onClick={handleFastForward}
+                      className="p-2 rounded-full bg-black/60 text-gold-300 border border-gold-500/30 hover:bg-gold-500/20 transition-all"
+                      title="Fast Forward 10s"
+                    >
+                      <FastForward className="w-4 h-4" />
+                    </button>
 
-              {!isPlaying && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={toggleVideoPlay}
-                    className="p-4 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/50 hover:scale-110 hover:bg-gold-500/30 backdrop-blur-md transition-all shadow-lg"
-                  >
-                    <Play className="w-8 h-8 fill-current ml-0.5" />
-                  </button>
+                    {/* Mute Button */}
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      className="p-2 rounded-full bg-black/60 text-gold-300 border border-gold-500/30 hover:bg-gold-500/20 transition-all"
+                      title={isMuted ? "Unmute" : "Mute"}
+                    >
+                      {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
-              )}
 
-              <div className="flex justify-between items-end">
-                <div className="text-xs text-neutral-300 font-light">
-                  Watch the ritual demonstration procedure
-                </div>
-                {isPlaying && (
-                  <button
-                    type="button"
-                    onClick={toggleVideoPlay}
-                    className="p-2 rounded-full bg-black/60 text-gold-300 border border-gold-500/30 hover:bg-gold-500/20 transition-all"
-                  >
-                    <Pause className="w-4 h-4" />
-                  </button>
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={toggleVideoPlay}
+                      className="p-4 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/50 hover:scale-110 hover:bg-gold-500/30 backdrop-blur-md transition-all shadow-lg"
+                    >
+                      <Play className="w-8 h-8 fill-current ml-0.5" />
+                    </button>
+                  </div>
                 )}
+
+                <div className="flex justify-between items-end">
+                  <div className="text-xs text-neutral-300 font-light">
+                    Watch the demonstration procedure
+                  </div>
+                  {isPlaying && (
+                    <button
+                      type="button"
+                      onClick={toggleVideoPlay}
+                      className="p-2 rounded-full bg-black/60 text-gold-300 border border-gold-500/30 hover:bg-gold-500/20 transition-all"
+                    >
+                      <Pause className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </Card>
       </motion.div>
@@ -574,7 +354,7 @@ export const SubmitNumbers = () => {
                     <h3 className="font-serif font-semibold text-neutral-100 text-sm">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
+                    <p className="text-xs text-neutral-300 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -593,7 +373,7 @@ export const SubmitNumbers = () => {
               Input Your 4 Intuitive Numbers
             </h3>
             <p className="text-xs text-neutral-400 mt-0.5">
-              Enter each two-digit number into the channeled slots below.
+              Enter each two-digit number received during your 4 breathing rounds.
             </p>
           </div>
           <ShieldCheck className="w-5 h-5 text-gold-400/60" />
@@ -605,7 +385,7 @@ export const SubmitNumbers = () => {
             {[0, 1, 2, 3].map((idx) => (
               <div key={idx} className="flex flex-col gap-1.5">
                 <label className="text-[10px] uppercase font-mono tracking-wider text-neutral-400 text-center">
-                  Number 0{idx + 1}
+                  Round 0{idx + 1} Number
                 </label>
                 <input
                   id={`number-input-${idx}`}
@@ -628,6 +408,12 @@ export const SubmitNumbers = () => {
                 )}
               </div>
             ))}
+          </div>
+
+          {/* Prompt banner regarding 24hr response time */}
+          <div className="p-3 rounded-lg border border-gold-500/20 bg-gold-500/5 flex items-center gap-2.5 text-xs text-gold-300/90">
+            <Info className="w-4 h-4 shrink-0 text-gold-400" />
+            <span>Note: After submitting your 4 numbers, you will receive your personal response and divine alignment within <strong>24 hours</strong>.</span>
           </div>
 
           {/* Submit Button */}
@@ -666,9 +452,13 @@ export const SubmitNumbers = () => {
           >
             <Card className="p-5 border-emerald-500/40 bg-emerald-500/10 backdrop-blur space-y-3">
               <div className="flex items-center gap-2 text-emerald-300 font-medium text-sm">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
                 <span>Sacred numbers submitted successfully!</span>
               </div>
+
+              <p className="text-xs text-emerald-200/90 leading-relaxed">
+                Your 4 numbers have been logged. Your divine consultation and response will be ready within <strong>24 hours</strong>.
+              </p>
 
               <div className="flex items-center justify-between text-xs border-t border-emerald-500/20 pt-3">
                 <div className="flex items-center gap-1.5 text-amber-300">
