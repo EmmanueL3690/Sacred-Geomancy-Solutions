@@ -22,7 +22,7 @@ import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabaseClient';
 
 // Import video directly from assets directory
-import demoVideo from '../../../src/assets/videos/video1.mp4';
+import demoVideo from '../../assets/videos/video1.mp4';
 
 export const SubmitNumbers = () => {
   const [numbers, setNumbers] = useState(['', '', '', '']);
