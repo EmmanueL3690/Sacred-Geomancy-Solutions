@@ -21,9 +21,6 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabaseClient';
 
-// Import video directly from assets directory
-import demoVideo from '../../assets/videos/video1.mp4';
-
 export const SubmitNumbers = () => {
   const [numbers, setNumbers] = useState(['', '', '', '']);
   const [errors, setErrors] = useState(['', '', '', '']);
@@ -233,7 +230,7 @@ export const SubmitNumbers = () => {
             {!videoError ? (
               <video
                 ref={videoRef}
-                src={demoVideo}
+                src="/video1.mp4"
                 className="w-full h-full object-cover"
                 loop
                 playsInline
@@ -252,7 +249,7 @@ export const SubmitNumbers = () => {
               <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black/80">
                 <AlertCircle className="w-8 h-8 text-amber-400 mb-2" />
                 <p className="text-xs text-neutral-300">Demonstration video preview currently unavailable.</p>
-                <p className="text-[10px] text-neutral-500 mt-1">Please check asset path src/assets/videos/video1.mp4.</p>
+                <p className="text-[10px] text-neutral-500 mt-1">Please check public folder path /video1.mp4.</p>
               </div>
             )}
             

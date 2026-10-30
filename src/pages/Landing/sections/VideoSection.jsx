@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Play, AlertCircle } from "lucide-react"; // Added AlertCircle for UI feedback
-import demoVideo from "../../../assets/videos/video1.mp4";
+import { Play, AlertCircle } from "lucide-react";
 
 export default function VideoSection() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoError, setVideoError] = useState(false); // <--- 1. Track video errors
+  const [videoError, setVideoError] = useState(false);
 
   const handleOverlayClick = async () => {
     if (videoRef.current && !videoError) {
@@ -48,7 +47,7 @@ export default function VideoSection() {
           </p>
 
           <button 
-            className="mt-8 bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-xl font-semibold"
+            className="mt-8 bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-xl font-semibold cursor-pointer"
             onClick={() => navigate("/services")}
           >
             Get Started
@@ -61,16 +60,18 @@ export default function VideoSection() {
             {!videoError ? (
               <video
                 ref={videoRef}
-                src={demoVideo}
+                src="/video1.mp4"
                 className="w-full h-full object-cover"
                 controls
+                playsInline
+                preload="auto"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
                 onEnded={() => setIsPlaying(false)}
                 onError={(e) => {
                   console.error("Video error code:", e.currentTarget.error?.code);
                   console.error("Video error message:", e.currentTarget.error?.message);
-                  setVideoError(true); // <--- 2. Catch it and prevent UI crashing
+                  setVideoError(true);
                 }}
               />
             ) : (
@@ -78,12 +79,12 @@ export default function VideoSection() {
               <div className="flex flex-col items-center justify-center p-6 text-center text-gray-400">
                 <AlertCircle className="w-8 h-8 text-amber-400 mb-2" />
                 <p className="text-sm font-medium">Video preview unavailable</p>
-                <p className="text-xs text-gray-500 mt-1">Please check if video1.mp4 exists in your assets folder.</p>
+                <p className="text-xs text-gray-500 mt-1">Please check if video1.mp4 exists in your public folder.</p>
               </div>
             )}
           </div>
 
-          {/* {Play Button Overlay (Hides once playing or if there's an error) */}
+          {/* Play Button Overlay (Hides once playing or if there's an error) */}
           {!isPlaying && !videoError && (
             <div
               onClick={handleOverlayClick}
