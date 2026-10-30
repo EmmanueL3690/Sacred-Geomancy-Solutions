@@ -18,12 +18,8 @@ import ServicesPage from "../pages/Landing/ServicesPage";
 
 // Dashboard Pages
 import Home from "../pages/Dashboard/Home";
-// import Profile from "../pages/Dashboard/Profile";
 import SubmissionHistory from "../pages/Dashboard/SubmissionHistory";
 import SubmitNumbers from "../pages/Dashboard/SubmitNumbers";
-// import Notifications from "../pages/Dashboard/Notifications";
-// import Testimonies from "../pages/Dashboard/Testimonies";
-// import Settings from "../pages/Dashboard/Settings";
 
 // Admin Module Routes
 import AdminRoutes from "../admin/routes/AdminRoutes";
@@ -57,17 +53,15 @@ export default function AppRouter() {
           <Route index element={<Home />} />
           <Route path="submit" element={<SubmitNumbers />} />
           <Route path="history" element={<SubmissionHistory />} />
-          {/* <Route path="testimonies" element={<Testimonies />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} /> */}
         </Route>
       </Route>
 
       {/* =========================
-            ADMIN DASHBOARD ROUTES
+            ADMIN DASHBOARD ROUTES (SECURED)
       ========================== */}
-      <Route path="/admin/*" element={<AdminRoutes />} />
+      <Route element={<ProtectedRoute adminOnly={true} />}>
+        <Route path="/admin/*" element={<AdminRoutes />} />
+      </Route>
 
       {/* =========================
             404 FALLBACK

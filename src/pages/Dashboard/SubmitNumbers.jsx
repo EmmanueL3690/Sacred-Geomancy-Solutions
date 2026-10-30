@@ -37,16 +37,19 @@ export const SubmitNumbers = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [videoError, setVideoError] = useState(false);
 
-  const toggleVideoPlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play().catch((err) => {
+  const toggleVideoPlay = async () => {
+    if (videoRef.current && !videoError) {
+      try {
+        if (videoRef.current.paused) {
+          await videoRef.current.play();
+        } else {
+          videoRef.current.pause();
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
           console.error("Playback error:", err);
-        });
+        }
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -104,7 +107,6 @@ export const SubmitNumbers = () => {
     setIsSubmitting(true);
 
     try {
-      // 1. Get currently logged-in user
       const {
         data: { user },
         error: userError,
@@ -114,7 +116,6 @@ export const SubmitNumbers = () => {
         throw new Error('You must be logged in to submit numbers for divine consultation.');
       }
 
-      // 2. Save submission to Supabase database
       const { data, error } = await supabase
         .from('submissions')
         .insert({
@@ -132,28 +133,25 @@ export const SubmitNumbers = () => {
         throw error;
       }
 
-      // 3. Trigger Resend Email Notification via Supabase Edge Function ('resend-email')
       const userNumbers = [data.number_1, data.number_2, data.number_3, data.number_4].join(', ');
 
-      const { error: functionError } =
-  await supabase.functions.invoke("resend-email", {
-    body: {
-      email: user.email,
-      subject: "Sacred Geomancy - New Submission",
-      message: `
-        <h2>New Sacred Numbers Submission</h2>
-        <p><strong>User Email:</strong> ${user.email}</p>
-        <p><strong>Numbers:</strong> ${userNumbers}</p>
-        <p><strong>Submission ID:</strong> ${data.id}</p>
-      `,
-    },
-  });
+      const { error: functionError } = await supabase.functions.invoke("resend-email", {
+        body: {
+          email: user.email,
+          subject: "Sacred Geomancy - New Submission",
+          message: `
+            <h2>New Sacred Numbers Submission</h2>
+            <p><strong>User Email:</strong> ${user.email}</p>
+            <p><strong>Numbers:</strong> ${userNumbers}</p>
+            <p><strong>Submission ID:</strong> ${data.id}</p>
+          `,
+        },
+      });
 
       if (functionError) {
         console.warn('Failed to send confirmation email:', functionError);
       }
 
-      // 4. Show success message in UI
       setSubmittedData({
         id: data.id,
         numbers: [
@@ -165,16 +163,11 @@ export const SubmitNumbers = () => {
         status: data.status || 'Pending Review',
       });
 
-      // 5. Clear form
       setNumbers(['', '', '', '']);
 
     } catch (error) {
       console.error('SUBMISSION ERROR:', error);
-
-      setSubmitError(
-        error.message || 'Failed to submit numbers. Please try again.'
-      );
-
+      setSubmitError(error.message || 'Failed to submit numbers. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -240,21 +233,26 @@ export const SubmitNumbers = () => {
             {!videoError ? (
               <video
                 ref={videoRef}
+                src={demoVideo}
                 className="w-full h-full object-cover"
                 loop
                 playsInline
                 muted={isMuted}
+                preload="auto"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
                 onEnded={() => setIsPlaying(false)}
-                onError={() => setVideoError(true)}
-              >
-                <source src={demoVideo} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                onError={(e) => {
+                  console.error("Video error code:", e.currentTarget.error?.code);
+                  console.error("Video error message:", e.currentTarget.error?.message);
+                  setVideoError(true);
+                }}
+              />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black/80">
                 <AlertCircle className="w-8 h-8 text-amber-400 mb-2" />
                 <p className="text-xs text-neutral-300">Demonstration video preview currently unavailable.</p>
-                <p className="text-[10px] text-neutral-500 mt-1">Please check asset path src/assets/video1.mp4.</p>
+                <p className="text-[10px] text-neutral-500 mt-1">Please check asset path src/assets/videos/video1.mp4.</p>
               </div>
             )}
             
@@ -267,7 +265,6 @@ export const SubmitNumbers = () => {
                   </span>
                   
                   <div className="flex items-center gap-2">
-                    {/* Fast Forward Button */}
                     <button
                       type="button"
                       onClick={handleFastForward}
@@ -277,7 +274,6 @@ export const SubmitNumbers = () => {
                       <FastForward className="w-4 h-4" />
                     </button>
 
-                    {/* Mute Button */}
                     <button
                       type="button"
                       onClick={toggleMute}
@@ -290,11 +286,11 @@ export const SubmitNumbers = () => {
                 </div>
 
                 {!isPlaying && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <button
                       type="button"
                       onClick={toggleVideoPlay}
-                      className="p-4 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/50 hover:scale-110 hover:bg-gold-500/30 backdrop-blur-md transition-all shadow-lg"
+                      className="p-4 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/50 hover:scale-110 hover:bg-gold-500/30 backdrop-blur-md transition-all shadow-lg pointer-events-auto"
                     >
                       <Play className="w-8 h-8 fill-current ml-0.5" />
                     </button>
@@ -380,7 +376,6 @@ export const SubmitNumbers = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 4 Input Fields */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {[0, 1, 2, 3].map((idx) => (
               <div key={idx} className="flex flex-col gap-1.5">
@@ -410,13 +405,11 @@ export const SubmitNumbers = () => {
             ))}
           </div>
 
-          {/* Prompt banner regarding 24hr response time */}
           <div className="p-3 rounded-lg border border-gold-500/20 bg-gold-500/5 flex items-center gap-2.5 text-xs text-gold-300/90">
             <Info className="w-4 h-4 shrink-0 text-gold-400" />
             <span>Note: After submitting your 4 numbers, you will receive your personal response and divine alignment within <strong>24 hours</strong>.</span>
           </div>
 
-          {/* Submit Button */}
           <Button
             type="submit"
             variant="primary"
@@ -428,7 +421,6 @@ export const SubmitNumbers = () => {
           </Button>
         </form>
 
-        {/* Submission Error */}
         {submitError && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -443,7 +435,6 @@ export const SubmitNumbers = () => {
           </motion.div>
         )}
 
-        {/* Submission Feedback */}
         {submittedData && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}

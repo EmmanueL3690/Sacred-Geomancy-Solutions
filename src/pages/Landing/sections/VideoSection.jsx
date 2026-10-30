@@ -1,16 +1,30 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Play } from "lucide-react";
+import { Play, AlertCircle } from "lucide-react"; // Added AlertCircle for UI feedback
+import demoVideo from "../../../assets/videos/video1.mp4";
 
 export default function VideoSection() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [videoError, setVideoError] = useState(false); // <--- 1. Track video errors
 
-  const handlePlay = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
-      setIsPlaying(true);
+  const handleOverlayClick = async () => {
+    if (videoRef.current && !videoError) {
+      try {
+        if (videoRef.current.paused) {
+          await videoRef.current.play();
+          setIsPlaying(true);
+        } else {
+          videoRef.current.pause();
+          setIsPlaying(false);
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Playback failed:", error);
+        }
+        setIsPlaying(false);
+      }
     }
   };
 
@@ -34,35 +48,54 @@ export default function VideoSection() {
           </p>
 
           <button 
-          className="mt-8 bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-xl font-semibold"
-          onClick={() => navigate("/services")}>
+            className="mt-8 bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-xl font-semibold"
+            onClick={() => navigate("/services")}
+          >
             Get Started
           </button>
         </div>
 
         {/* RIGHT VIDEO */}
         <div className="relative group">
-          <div className="rounded-2xl overflow-hidden shadow-2xl">
-            <video
-              ref={videoRef}
-              src="/videos/video1.mp4"
-              className="w-full h-[350px] object-cover"
-              controls={isPlaying}
-            />
+          <div className="rounded-2xl overflow-hidden shadow-2xl bg-black h-[350px] flex items-center justify-center">
+            {!videoError ? (
+              <video
+                ref={videoRef}
+                src={demoVideo}
+                className="w-full h-full object-cover"
+                controls
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+                onError={(e) => {
+                  console.error("Video error code:", e.currentTarget.error?.code);
+                  console.error("Video error message:", e.currentTarget.error?.message);
+                  setVideoError(true); // <--- 2. Catch it and prevent UI crashing
+                }}
+              />
+            ) : (
+              // Fallback UI if video fails to load or path is wrong
+              <div className="flex flex-col items-center justify-center p-6 text-center text-gray-400">
+                <AlertCircle className="w-8 h-8 text-amber-400 mb-2" />
+                <p className="text-sm font-medium">Video preview unavailable</p>
+                <p className="text-xs text-gray-500 mt-1">Please check if video1.mp4 exists in your assets folder.</p>
+              </div>
+            )}
           </div>
 
-          {/* Play Button Overlay (Before Play) */}
-          {!isPlaying && (
+          {/* {Play Button Overlay (Hides once playing or if there's an error) */}
+          {!isPlaying && !videoError && (
             <div
-              onClick={handlePlay}
-              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+              onClick={handleOverlayClick}
+              className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/40 hover:bg-black/20 transition rounded-2xl"
             >
-              <div className="bg-blue-600 p-6 rounded-full hover:scale-110 transition">
+              <div className="bg-blue-600 p-6 rounded-full hover:scale-110 transition shadow-lg">
                 <Play size={32} />
               </div>
             </div>
           )}
         </div>
+
       </div>
     </section>
   );

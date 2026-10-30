@@ -1,7 +1,42 @@
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import React, { useState } from "react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ContactPage() {
+  const [status, setStatus] = useState({
+    submitting: false,
+    submitted: false,
+    error: null,
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus({ submitting: true, submitted: false, error: null });
+
+    const form = e.target;
+    const data = new FormData(form);
+
+    try {
+      const response = await fetch("https://formspree.io/f/xljjlqqo", {
+        method: "POST",
+        body: data,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setStatus({ submitting: false, submitted: true, error: null });
+        form.reset();
+      } else {
+        const responseData = await response.json();
+        throw new Error(responseData.error || "Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      setStatus({ submitting: false, submitted: false, error: error.message });
+    }
+  };
+
   return (
     <div className="relative bg-black text-white min-h-screen overflow-hidden">
 
@@ -103,16 +138,20 @@ export default function ContactPage() {
           >
             <h2 className="text-2xl font-semibold mb-6">Send a Message</h2>
 
-            <form className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* name + email */}
               <div className="grid md:grid-cols-2 gap-4">
                 <input
                   type="text"
+                  name="name"
+                  required
                   placeholder="Your Name *"
                   className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A227]"
                 />
                 <input
                   type="email"
+                  name="email"
+                  required
                   placeholder="Your Email *"
                   className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A227]"
                 />
@@ -120,26 +159,45 @@ export default function ContactPage() {
 
               <input
                 type="text"
+                name="subject"
                 placeholder="Subject"
                 className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A227]"
               />
 
               <textarea
+                name="message"
+                required
                 placeholder="Your Message *"
                 rows="5"
                 className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#C9A227]"
               />
 
+              {/* SUCCESS / ERROR NOTIFICATIONS */}
+              {status.submitted && (
+                <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-emerald-300 text-sm">
+                  <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+                  <span>Thank you! Your message has been sent successfully. We will reach out soon.</span>
+                </div>
+              )}
+
+              {status.error && (
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center gap-3 text-red-300 text-sm">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-red-400" />
+                  <span>{status.error}</span>
+                </div>
+              )}
+
               {/* MAGNETIC BUTTON */}
               <button
                 type="submit"
-                className="group relative w-full py-4 rounded-lg font-medium overflow-hidden"
+                disabled={status.submitting}
+                className="group relative w-full py-4 rounded-lg font-medium overflow-hidden disabled:opacity-50"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-[#C9A227] to-yellow-500 transition group-hover:scale-105"></span>
 
                 <span className="relative flex items-center justify-center gap-2 text-black font-semibold">
                   <Send size={18} />
-                  Send Message
+                  {status.submitting ? "TRANSMITTING..." : "Send Message"}
                 </span>
               </button>
             </form>

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Bell, Search } from 'lucide-react';
-import { Input } from '../ui/Input';
+import { Bell } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 
 export const TopHeader = ({ title = 'Overview', subtitle, className = '' }) => {
@@ -16,14 +15,11 @@ export const TopHeader = ({ title = 'Overview', subtitle, className = '' }) => {
         {subtitle && <p className="text-xs text-neutral-400 mt-0.5">{subtitle}</p>}
       </div>
 
-      {/* Right Actions */}
+      {/* Right Actions: Geomancy Solution Name & Notification Bell */}
       <div className="flex items-center gap-4">
-        <div className="w-64">
-          <Input
-            placeholder="Search coordinates..."
-            className="!py-2 text-xs border-gold-500/20 bg-obsidian-900"
-          />
-        </div>
+        <span className="text-xs font-serif tracking-widest uppercase text-gold-300/90 font-medium px-3 py-1.5 rounded-lg border border-gold-500/20 bg-obsidian-900/60 backdrop-blur">
+          Sacred Geomancy Solutions
+        </span>
 
         <button
           aria-label="Notifications"
@@ -33,11 +29,9 @@ export const TopHeader = ({ title = 'Overview', subtitle, className = '' }) => {
           <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-gold-400 animate-ping" />
           <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-gold-500" />
         </button>
-
-        <Badge variant="gold" className="text-[10px]">
-          Node Active
-        </Badge>
       </div>
     </header>
   );
 };
+
+export default TopHeader;
