@@ -15,11 +15,13 @@ import {
   ShieldCheck,
   AlertCircle,
   Info,
-  FastForward
+  FastForward,
+  Music
 } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabaseClient';
+import audioFile from '../../assets/audio/Geomancy-audio.aac';
 
 export const SubmitNumbers = () => {
   const [numbers, setNumbers] = useState(['', '', '', '']);
@@ -33,6 +35,12 @@ export const SubmitNumbers = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [videoError, setVideoError] = useState(false);
+
+  // Audio State
+  const audioRef = useRef(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [audioError, setAudioError] = useState(false);
 
   const toggleVideoPlay = async () => {
     if (videoRef.current && !videoError) {
@@ -60,6 +68,29 @@ export const SubmitNumbers = () => {
   const handleFastForward = () => {
     if (videoRef.current) {
       videoRef.current.currentTime += 10; // Skip forward 10 seconds
+    }
+  };
+
+  const toggleAudioPlay = async () => {
+    if (audioRef.current && !audioError) {
+      try {
+        if (audioRef.current.paused) {
+          await audioRef.current.play();
+        } else {
+          audioRef.current.pause();
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Audio playback error:", err);
+        }
+      }
+    }
+  };
+
+  const toggleAudioMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isAudioMuted;
+      setIsAudioMuted(!isAudioMuted);
     }
   };
 
@@ -308,6 +339,96 @@ export const SubmitNumbers = () => {
                     </button>
                   )}
                 </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* Audio Guidance Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <Card className="p-4 sm:p-5 border-gold-500/30 bg-obsidian-900/80 backdrop-blur-md overflow-hidden shadow-2xl relative space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-300">
+                <Music className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="font-serif font-semibold text-neutral-100 text-sm">
+                  Audio Guide: Getting Started & Picking Your 4 Numbers
+                </h3>
+                <p className="text-xs text-neutral-400 font-light">
+                  Listen to the voice guidance on how to begin and tune into your 4 numbers.
+                </p>
+              </div>
+            </div>
+            
+            <span className="text-[10px] font-mono text-gold-300 bg-gold-500/10 px-2 py-1 rounded border border-gold-500/30">
+              AAC Audio
+            </span>
+          </div>
+
+          <div className="relative rounded-lg bg-black/60 border border-gold-500/20 p-4 flex items-center gap-4">
+            {!audioError && (
+              <audio
+                ref={audioRef}
+                src={audioFile}
+                preload="metadata"
+                onPlay={() => setIsAudioPlaying(true)}
+                onPause={() => setIsAudioPlaying(false)}
+                onEnded={() => setIsAudioPlaying(false)}
+                onError={(e) => {
+                  console.error("Audio error:", e);
+                  setAudioError(true);
+                }}
+              />
+            )}
+
+            <button
+              type="button"
+              onClick={toggleAudioPlay}
+              disabled={audioError}
+              className="p-3 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/50 hover:scale-105 hover:bg-gold-500/30 transition-all shadow-lg shrink-0 disabled:opacity-50"
+              title={isAudioPlaying ? "Pause Audio" : "Play Audio"}
+            >
+              {isAudioPlaying ? (
+                <Pause className="w-5 h-5 fill-current" />
+              ) : (
+                <Play className="w-5 h-5 fill-current ml-0.5" />
+              )}
+            </button>
+
+            <div className="flex-1 space-y-1">
+              <div className="flex justify-between text-xs text-neutral-300">
+                <span className="font-mono text-gold-300">Geomancy-audio.aac</span>
+                <span className="text-neutral-400 text-[11px]">
+                  {isAudioPlaying ? 'Playing guidance...' : 'Ready to listen'}
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-neutral-800 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full bg-gradient-to-r from-gold-500 to-amber-400 transition-all duration-300 ${isAudioPlaying ? 'w-full animate-pulse' : 'w-0'}`} 
+                />
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={toggleAudioMute}
+              disabled={audioError}
+              className="p-2 rounded-full bg-black/60 text-gold-300 border border-gold-500/30 hover:bg-gold-500/20 transition-all shrink-0"
+              title={isAudioMuted ? "Unmute" : "Mute"}
+            >
+              {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+
+            {audioError && (
+              <div className="absolute inset-0 bg-black/80 flex items-center justify-center p-4 text-center rounded-lg">
+                <p className="text-xs text-amber-400">Audio file unavailable or path is invalid.</p>
               </div>
             )}
           </div>
